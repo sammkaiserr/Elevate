@@ -1,0 +1,25 @@
+.main-layout {
+  display: flex;
+  max-width: 96rem;
+  margin: 0 auto;
+  padding-top: 4rem;
+}
+
+.main-layout__content {
+  flex: 1;
+  margin-left: 0;
+  margin-right: 0;
+  padding: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .main-layout__content {
+    margin-left: 16rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .main-layout__content.has-right-sidebar {
+    margin-right: 20rem;
+  }
+}

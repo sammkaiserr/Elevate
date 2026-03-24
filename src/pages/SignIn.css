@@ -1,0 +1,304 @@
+/* ============================================
+   SIGN IN PAGE
+   ============================================ */
+.signin {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background-color: var(--surface);
+  background-image:
+    radial-gradient(at 0% 0%, rgba(214, 227, 255, 0.4) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(26, 54, 93, 0.05) 0px, transparent 50%);
+  position: relative;
+}
+
+.signin__wrapper {
+  width: 100%;
+  max-width: 28rem;
+}
+
+/* Brand */
+.signin__brand {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.signin__brand h1 {
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.signin__brand p {
+  color: var(--on-surface-variant);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  font-size: 0.875rem;
+}
+
+/* Card */
+.signin__card {
+  background: var(--surface-container-lowest);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(196, 198, 207, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.signin__card-accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-container));
+}
+
+.signin__card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Welcome section */
+.signin__welcome h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--on-surface);
+  letter-spacing: -0.02em;
+}
+
+.signin__welcome p {
+  color: var(--on-surface-variant);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* Google button */
+.signin__google-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--surface-container-low);
+  color: var(--on-surface);
+  font-weight: 500;
+  border-radius: var(--radius-lg);
+  transition: background var(--transition-normal);
+  font-size: 0.875rem;
+}
+
+.signin__google-btn:hover {
+  background: var(--surface-container-high);
+}
+
+.signin__google-btn svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Divider */
+.signin__divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 0;
+}
+
+.signin__divider-line {
+  flex: 1;
+  height: 1px;
+  background: rgba(196, 198, 207, 0.3);
+}
+
+.signin__divider span {
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+/* Form */
+.signin__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.signin__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.signin__label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding-left: 0.25rem;
+}
+
+.signin__input {
+  width: 100%;
+  background: var(--surface-container-highest);
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: 0.75rem 1rem;
+  color: var(--on-surface);
+  transition: box-shadow var(--transition-normal);
+  font-size: 0.875rem;
+}
+
+.signin__input::placeholder {
+  color: var(--outline);
+}
+
+.signin__input:focus {
+  box-shadow: 0 0 0 2px rgba(0, 32, 69, 0.2);
+}
+
+.signin__field-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 0.25rem;
+}
+
+.signin__forgot {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--tertiary-container);
+  transition: color var(--transition-normal);
+}
+
+.signin__forgot:hover {
+  color: var(--on-tertiary-container);
+}
+
+.signin__submit {
+  width: 100%;
+  padding: 1rem;
+  margin-top: 0.5rem;
+}
+
+/* Trust */
+.signin__trust {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(196, 198, 207, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--on-surface-variant);
+}
+
+.signin__trust .material-symbols-outlined {
+  font-size: 0.875rem;
+  font-variation-settings: 'FILL' 1;
+}
+
+.signin__trust span:last-child {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Footer */
+.signin__footer {
+  text-align: center;
+  margin-top: 2rem;
+  color: var(--on-surface-variant);
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.signin__footer a {
+  color: var(--primary);
+  font-weight: 700;
+  margin-left: 0.25rem;
+}
+
+.signin__footer a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Decorative orbs */
+.signin__orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(60px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.signin__orb--1 {
+  bottom: -6rem;
+  left: -6rem;
+  width: 16rem;
+  height: 16rem;
+  background: rgba(0, 32, 69, 0.05);
+}
+
+.signin__orb--2 {
+  top: -6rem;
+  right: -6rem;
+  width: 20rem;
+  height: 20rem;
+  background: rgba(26, 54, 93, 0.05);
+}
+
+/* Side panel (desktop) */
+.signin__side-panel {
+  display: none;
+  position: fixed;
+  bottom: 2.5rem;
+  right: 2.5rem;
+  max-width: 18rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(196, 198, 207, 0.1);
+  box-shadow: var(--shadow-sm);
+}
+
+@media (min-width: 1024px) {
+  .signin__side-panel { display: block; }
+}
+
+.signin__side-panel-inner {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.signin__side-panel-icon {
+  padding: 0.5rem;
+  background: var(--secondary-container);
+  border-radius: var(--radius-sm);
+  color: var(--on-secondary-container);
+}
+
+.signin__side-panel h4 {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--on-surface);
+}
+
+.signin__side-panel p {
+  font-size: 0.75rem;
+  color: var(--on-surface-variant);
+  margin-top: 0.25rem;
+  line-height: 1.5;
+}

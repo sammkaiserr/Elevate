@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Profile Setup | Elevate</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#adc7f7",
+                        "on-secondary-fixed-variant": "#3c475a",
+                        "on-surface-variant": "#43474e",
+                        "on-tertiary-fixed": "#001d37",
+                        "surface-container-high": "#e5e9eb",
+                        "on-primary-container": "#86a0cd",
+                        "tertiary-fixed-dim": "#9fcaff",
+                        "on-surface": "#181c1e",
+                        "inverse-on-surface": "#eef1f3",
+                        "on-primary": "#ffffff",
+                        "tertiary": "#00213e",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-secondary-fixed": "#111c2c",
+                        "surface-container": "#ebeef0",
+                        "primary-fixed-dim": "#adc7f7",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#2d476f",
+                        "on-background": "#181c1e",
+                        "primary-fixed": "#d6e3ff",
+                        "tertiary-container": "#003762",
+                        "surface-variant": "#e0e3e5",
+                        "background": "#f7fafc",
+                        "on-primary-fixed": "#001b3c",
+                        "secondary-fixed": "#d8e3fa",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#d7dadc",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-low": "#f1f4f6",
+                        "tertiary-fixed": "#d2e4ff",
+                        "surface-bright": "#f7fafc",
+                        "on-tertiary-container": "#58a2f0",
+                        "secondary": "#545f72",
+                        "on-error": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#c4c6cf",
+                        "surface": "#f7fafc",
+                        "on-secondary-container": "#586377",
+                        "primary-container": "#1a365d",
+                        "on-error-container": "#93000a",
+                        "outline": "#74777f",
+                        "secondary-fixed-dim": "#bcc7dd",
+                        "on-tertiary-fixed-variant": "#00497e",
+                        "secondary-container": "#d5e0f7",
+                        "inverse-surface": "#2d3133",
+                        "primary": "#002045",
+                        "surface-tint": "#455f88"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .bg-glass {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-background antialiased">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm shadow-blue-900/5">
+<div class="flex items-center justify-between px-6 py-3 w-full max-w-screen-2xl mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-900 to-blue-700 dark:from-blue-100 dark:to-blue-300 font-headline">Elevate</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-xl hover:bg-slate-100/50 transition-colors duration-200 text-slate-500">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 rounded-xl hover:bg-slate-100/50 transition-colors duration-200 text-slate-500">
+<span class="material-symbols-outlined">chat_bubble</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User profile avatar illustration" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJ5c9eV9PRVrEIGFPDN_SEYKTDkXuT0QO0NIoYqymrveSum-xc6za79xmfOolkAUNaNeqcHRjmDVIF0nDQkCqhIIT19udUhfIkYeFuPfAcTZ9Xy5ig9W-6Mha_XNSt7JbXBimJxguw2ZZlV-st_-3C2rm5kqjRJvO_AgOuj1m4TW2zEHsV5DV4gkhadb5TJBLx_nxN7C-OD_X4cQqu6w_0YSIBpVSiqEUy5rOVFv6_kM8QFXUzkkGrD-wRXj3jOr86A3ztj_q04g"/>
+</div>
+</div>
+</div>
+</nav>
+<main class="pt-24 pb-20 px-6 max-w-screen-xl mx-auto flex flex-col md:flex-row gap-12">
+<!-- Left Sidebar: Progress Navigation -->
+<aside class="w-full md:w-64 flex flex-col gap-8">
+<div class="flex flex-col gap-6">
+<h1 class="text-3xl font-extrabold font-headline tracking-tight text-primary">Build your profile</h1>
+<p class="text-on-surface-variant text-sm leading-relaxed">Complete your student identity to unlock personalized mentorship and opportunities.</p>
+</div>
+<nav class="flex flex-col gap-1">
+<div class="flex items-center gap-4 px-4 py-3 rounded-xl bg-surface-container-lowest shadow-sm border-l-4 border-primary">
+<span class="text-primary font-bold text-sm">01</span>
+<span class="text-primary font-bold text-sm font-headline">Personal Details</span>
+</div>
+<div class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant opacity-60">
+<span class="font-bold text-sm">02</span>
+<span class="font-medium text-sm font-headline">Academic Path</span>
+</div>
+<div class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant opacity-60">
+<span class="font-bold text-sm">03</span>
+<span class="font-medium text-sm font-headline">Interests &amp; Goals</span>
+</div>
+</nav>
+<div class="p-6 rounded-xl bg-primary-container text-white mt-auto">
+<span class="material-symbols-outlined mb-3 text-on-primary-container" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<p class="text-xs font-medium uppercase tracking-widest text-on-primary-container mb-2">Pro Tip</p>
+<p class="text-sm font-body">Profiles with detailed interests receive 4x more community engagement.</p>
+</div>
+</aside>
+<!-- Main Form Canvas -->
+<div class="flex-1">
+<section class="bg-surface-container-lowest rounded-xl p-8 md:p-12 shadow-sm border border-outline-variant/10">
+<form class="space-y-12">
+<!-- Step 1: Personal -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="col-span-2 border-b border-surface-container pb-4">
+<h2 class="text-xl font-bold font-headline text-primary">Personal Identity</h2>
+<p class="text-sm text-on-surface-variant">How you'll appear to your peers and mentors.</p>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold text-on-surface uppercase tracking-wider px-1">Full Name</label>
+<input class="bg-surface-container-highest border-none rounded-xl p-4 focus:ring-2 focus:ring-primary/40 transition-all text-on-surface font-body" placeholder="e.g. Alex Rivera" type="text"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold text-on-surface uppercase tracking-wider px-1">Date of Birth</label>
+<div class="relative">
+<input class="w-full bg-surface-container-highest border-none rounded-xl p-4 focus:ring-2 focus:ring-primary/40 transition-all text-on-surface font-body appearance-none" type="date"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">calendar_today</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold text-on-surface uppercase tracking-wider px-1">Current Location</label>
+<div class="relative">
+<input class="w-full bg-surface-container-highest border-none rounded-xl p-4 focus:ring-2 focus:ring-primary/40 transition-all text-on-surface font-body" placeholder="City, Country" type="text"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant">location_on</span>
+</div>
+</div>
+</div>
+<!-- Step 2: Academic -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+<div class="col-span-2 border-b border-surface-container pb-4">
+<h2 class="text-xl font-bold font-headline text-primary">Academic Background</h2>
+<p class="text-sm text-on-surface-variant">Tell us about your current studies.</p>
+</div>
+<div class="col-span-2 flex flex-col gap-2">
+<label class="text-xs font-bold text-on-surface uppercase tracking-wider px-1">University / College</label>
+<input class="bg-surface-container-highest border-none rounded-xl p-4 focus:ring-2 focus:ring-primary/40 transition-all text-on-surface font-body" placeholder="e.g. Stanford University" type="text"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold text-on-surface uppercase tracking-wider px-1">Course / Major</label>
+<input class="bg-surface-container-highest border-none rounded-xl p-4 focus:ring-2 focus:ring-primary/40 transition-all text-on-surface font-body" placeholder="e.g. Computer Science" type="text"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-xs font-bold text-on-surface uppercase tracking-wider px-1">Year of Graduation</label>
+<select class="bg-surface-container-highest border-none rounded-xl p-4 focus:ring-2 focus:ring-primary/40 transition-all text-on-surface font-body appearance-none">
+<option>2024</option>
+<option>2025</option>
+<option>2026</option>
+<option>2027</option>
+<option>2028+</option>
+</select>
+</div>
+</div>
+<!-- Step 3: Interests -->
+<div class="space-y-6 pt-4">
+<div class="border-b border-surface-container pb-4">
+<h2 class="text-xl font-bold font-headline text-primary">Interests &amp; Expertise</h2>
+<p class="text-sm text-on-surface-variant">Select topics that resonate with your career path.</p>
+</div>
+<div class="flex flex-wrap gap-3">
+<button class="px-5 py-2.5 rounded-full bg-secondary-container text-on-secondary-container text-sm font-semibold hover:bg-primary hover:text-white transition-all" type="button">Product Design</button>
+<button class="px-5 py-2.5 rounded-full bg-secondary-container text-on-secondary-container text-sm font-semibold hover:bg-primary hover:text-white transition-all" type="button">Machine Learning</button>
+<button class="px-5 py-2.5 rounded-full bg-primary text-white text-sm font-semibold" type="button">Entrepreneurship</button>
+<button class="px-5 py-2.5 rounded-full bg-secondary-container text-on-secondary-container text-sm font-semibold hover:bg-primary hover:text-white transition-all" type="button">Public Speaking</button>
+<button class="px-5 py-2.5 rounded-full bg-secondary-container text-on-secondary-container text-sm font-semibold hover:bg-primary hover:text-white transition-all" type="button">Fintech</button>
+<button class="px-5 py-2.5 rounded-full bg-secondary-container text-on-secondary-container text-sm font-semibold hover:bg-primary hover:text-white transition-all" type="button">Climate Tech</button>
+<button class="px-4 py-2 rounded-full border border-dashed border-outline text-on-surface-variant text-sm flex items-center gap-2 hover:bg-surface-container-low transition-all" type="button">
+<span class="material-symbols-outlined text-sm">add</span> Add Custom
+                            </button>
+</div>
+</div>
+<!-- Actions -->
+<div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-6 border-t border-surface-container">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-xl">security</span>
+<span class="text-xs">Your data is encrypted and secure</span>
+</div>
+<div class="flex gap-4 w-full md:w-auto">
+<button class="flex-1 md:flex-none px-8 py-4 rounded-xl bg-surface-container-high text-on-surface font-bold text-sm transition-all hover:bg-surface-dim" type="button">
+                                Save Draft
+                            </button>
+<button class="flex-1 md:flex-none px-10 py-4 rounded-xl bg-gradient-to-r from-primary to-primary-container text-white font-bold text-sm shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95" type="submit">
+                                Complete Profile
+                            </button>
+</div>
+</div>
+</form>
+</section>
+<!-- Contextual Help Card -->
+<div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-glass p-6 rounded-xl border border-white/20 shadow-sm flex flex-col gap-3">
+<span class="material-symbols-outlined text-primary">school</span>
+<h4 class="font-bold text-sm font-headline">Student Benefits</h4>
+<p class="text-xs text-on-surface-variant">Access exclusive student-only internships and grants from our corporate partners.</p>
+</div>
+<div class="bg-glass p-6 rounded-xl border border-white/20 shadow-sm flex flex-col gap-3">
+<span class="material-symbols-outlined text-primary">groups</span>
+<h4 class="font-bold text-sm font-headline">Peer Network</h4>
+<p class="text-xs text-on-surface-variant">Connect with 50,000+ students from top universities around the globe.</p>
+</div>
+<div class="bg-glass p-6 rounded-xl border border-white/20 shadow-sm flex flex-col gap-3">
+<span class="material-symbols-outlined text-primary">rocket_launch</span>
+<h4 class="font-bold text-sm font-headline">Career Growth</h4>
+<p class="text-xs text-on-surface-variant">Personalized roadmap based on your major and chosen interests.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Nav (Mobile Only) -->
+<nav class="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] bg-glass rounded-full shadow-2xl border border-white/30 px-6 py-3 flex justify-between items-center z-50">
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">dynamic_feed</span>
+</button>
+<button class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white shadow-lg -mt-8 border-4 border-surface">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">hub</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</nav>
+</body></html>
