@@ -1,41 +1,58 @@
-import React, { useState, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { supabase } from '../config/supabaseClient';
+import { useAuth } from '../context/AuthContext';
 import './CreateBlog.css';
 
 const CreateBlog = () => {
-  const [tags, setTags] = useState(['Engineering']);
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get('edit');
+  const isEditMode = !!editId;
+
+  const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState('');
   const [showTagInput, setShowTagInput] = useState(false);
   const [title, setTitle] = useState('');
-  const [coverImage, setCoverImage] = useState(null);
+  const [coverImagePreview, setCoverImagePreview] = useState(null);
+  const [coverImageFile, setCoverImageFile] = useState(null);
+  const [publishing, setPublishing] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const bodyRef = useRef(null);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
-  const removeTag = (tag) => {
-    setTags(prev => prev.filter(t => t !== tag));
-  };
+  // Load post data in edit mode
+  useEffect(() => {
+    if (isEditMode && editId) {
+      supabase.from('posts').select('*').eq('id', editId).single().then(({ data, error }) => {
+        if (!error && data) {
+          setTitle(data.title || '');
+          setTags(data.tags || []);
+          if (data.cover_image_url) setCoverImagePreview(data.cover_image_url);
+          // Set body content after render
+          setTimeout(() => {
+            if (bodyRef.current) bodyRef.current.innerHTML = data.content || '';
+          }, 0);
+        }
+      });
+    }
+  }, [isEditMode, editId]);
+
+  const removeTag = (tag) => setTags(prev => prev.filter(t => t !== tag));
 
   const addTag = () => {
     const trimmed = tagInput.trim();
-    if (trimmed && !tags.includes(trimmed)) {
-      setTags(prev => [...prev, trimmed]);
-    }
+    if (trimmed && !tags.includes(trimmed)) setTags(prev => [...prev, trimmed]);
     setTagInput('');
     setShowTagInput(false);
   };
 
   const handleTagKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      addTag();
-    } else if (e.key === 'Escape') {
-      setTagInput('');
-      setShowTagInput(false);
-    }
+    if (e.key === 'Enter') { e.preventDefault(); addTag(); }
+    else if (e.key === 'Escape') { setTagInput(''); setShowTagInput(false); }
   };
 
-  // Toolbar formatting
   const execFormat = (command, value = null) => {
     document.execCommand(command, false, value);
     if (bodyRef.current) bodyRef.current.focus();
@@ -46,50 +63,94 @@ const CreateBlog = () => {
     if (url) execFormat('createLink', url);
   };
 
-  const handleCoverImage = () => {
-    fileInputRef.current?.click();
-  };
+  const handleCoverImage = () => fileInputRef.current?.click();
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setCoverImageFile(file);
       const reader = new FileReader();
-      reader.onload = (ev) => setCoverImage(ev.target.result);
+      reader.onload = (ev) => setCoverImagePreview(ev.target.result);
       reader.readAsDataURL(file);
     }
   };
 
-  const handlePublish = () => {
-    alert('Post published successfully!');
-    navigate('/home');
+  const handlePublish = async () => {
+    setErrorMsg('');
+    if (!title.trim()) { setErrorMsg('Please add a title before publishing.'); return; }
+    setPublishing(true);
+
+    try {
+      if (!user?.id) throw new Error('You must be logged in to publish a post.');
+
+      let coverImageUrl = coverImagePreview || '';
+      if (coverImageFile) {
+        const fileExt = coverImageFile.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const filePath = `${user.id}/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('blog-covers')
+          .upload(filePath, coverImageFile);
+        if (uploadError) throw uploadError;
+
+        const { data: publicUrlData } = supabase.storage.from('blog-covers').getPublicUrl(filePath);
+        coverImageUrl = publicUrlData.publicUrl;
+      }
+
+      const content = bodyRef.current?.innerHTML || '';
+
+      if (isEditMode) {
+        const { error } = await supabase.from('posts').update({
+          title: title.trim(), content, tags,
+          cover_image_url: coverImageUrl,
+        }).eq('id', editId);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from('posts').insert({
+          user_id: user.id, title: title.trim(), content, tags,
+          cover_image_url: coverImageUrl,
+        });
+        if (error) throw error;
+      }
+
+      navigate('/profile/student');
+    } catch (err) {
+      console.error('Publish error:', err);
+      setErrorMsg(err.message || 'Unknown error occurred while publishing.');
+      setPublishing(false);
+    }
   };
 
   return (
     <div className="create-blog">
-      {/* Header */}
       <header className="create-blog__header">
         <div className="create-blog__header-inner">
           <div className="create-blog__header-left">
-            <Link to="/home" className="create-blog__close-btn">
+            <Link to={isEditMode ? '/profile/student' : '/home'} className="create-blog__close-btn">
               <span className="material-symbols-outlined" style={{ fontSize: '1.25rem' }}>close</span>
             </Link>
             <div className="create-blog__draft-status">
-              <span>Draft</span>
+              <span>{isEditMode ? 'Editing Post' : 'Draft'}</span>
               <span className="create-blog__draft-dot"></span>
-              <span className="create-blog__draft-time">Saved just now</span>
+              <span className="create-blog__draft-time">Unsaved</span>
             </div>
           </div>
           <div className="create-blog__header-actions">
-            <button className="btn-gradient create-blog__publish-btn" onClick={handlePublish}>
-              <span>Publish</span>
-              <span className="material-symbols-outlined" style={{ fontSize: '0.875rem' }}>rocket_launch</span>
+            <button className="btn-gradient create-blog__publish-btn" onClick={handlePublish} disabled={publishing}>
+              <span>{publishing ? (isEditMode ? 'Saving...' : 'Publishing...') : (isEditMode ? 'Save Changes' : 'Publish')}</span>
+              <span className="material-symbols-outlined" style={{ fontSize: '0.875rem' }}>{isEditMode ? 'save' : 'rocket_launch'}</span>
             </button>
           </div>
         </div>
       </header>
 
       <main className="create-blog__editor">
-        {/* Tags */}
+        {errorMsg && (
+          <div style={{ padding: '1rem', background: '#fee2e2', color: '#dc2626', borderRadius: '8px', marginBottom: '1rem', border: '1px solid #fecaca' }}>
+            <strong>Error:</strong> {errorMsg}
+          </div>
+        )}
         <div className="create-blog__tags">
           <button className="create-blog__add-tag" onClick={() => setShowTagInput(true)}>
             <span className="material-symbols-outlined">sell</span>
@@ -105,38 +166,22 @@ const CreateBlog = () => {
           ))}
           {showTagInput && (
             <input
-              type="text"
-              className="create-blog__tag-input"
-              placeholder="Type tag..."
-              value={tagInput}
-              onChange={(e) => setTagInput(e.target.value)}
-              onKeyDown={handleTagKeyDown}
-              onBlur={addTag}
-              autoFocus
+              type="text" className="create-blog__tag-input" placeholder="Type tag..."
+              value={tagInput} onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={handleTagKeyDown} onBlur={addTag} autoFocus
             />
           )}
         </div>
 
-        {/* Title */}
         <textarea
-          className="create-blog__title"
-          placeholder="Your disruptive insight here..."
-          rows="1"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          className="create-blog__title" placeholder="Your disruptive insight here..."
+          rows="1" value={title} onChange={(e) => setTitle(e.target.value)}
         />
 
-        {/* Cover Image */}
         <div className="create-blog__cover" onClick={handleCoverImage}>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            style={{ display: 'none' }}
-            onChange={handleFileChange}
-          />
-          {coverImage ? (
-            <img src={coverImage} alt="Cover" className="create-blog__cover-preview" />
+          <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+          {coverImagePreview ? (
+            <img src={coverImagePreview} alt="Cover" className="create-blog__cover-preview" />
           ) : (
             <div className="create-blog__cover-content">
               <div className="create-blog__cover-icon">
@@ -150,7 +195,6 @@ const CreateBlog = () => {
           )}
         </div>
 
-        {/* Toolbar */}
         <div className="create-blog__toolbar">
           <div className="create-blog__toolbar-group">
             <button className="create-blog__toolbar-btn" title="Bold" onClick={() => execFormat('bold')}>
@@ -189,19 +233,14 @@ const CreateBlog = () => {
           </div>
         </div>
 
-        {/* Content Area */}
         <div className="create-blog__content-area">
           <div
-            ref={bodyRef}
-            className="create-blog__body"
-            contentEditable
-            data-placeholder="Start writing or type '/' for commands..."
-            suppressContentEditableWarning
+            ref={bodyRef} className="create-blog__body" contentEditable
+            data-placeholder="Start writing or type '/' for commands..." suppressContentEditableWarning
           />
         </div>
       </main>
 
-      {/* Mobile Toolbar */}
       <div className="create-blog__mobile-toolbar">
         <button onClick={handleCoverImage}><span className="material-symbols-outlined">image</span></button>
         <button onClick={() => execFormat('insertUnorderedList')}><span className="material-symbols-outlined">format_list_bulleted</span></button>

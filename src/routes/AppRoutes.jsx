@@ -8,6 +8,7 @@ import Home from '../pages/Home';
 import CreateBlog from '../pages/CreateBlog';
 import Chat from '../pages/Chat';
 import Network from '../pages/Network';
+import Settings from '../pages/Settings';
 
 const AppRoutes = () => {
   return (
@@ -21,6 +22,7 @@ const AppRoutes = () => {
         <Route path="/network" element={<Network />} />
         <Route path="/create" element={<CreateBlog />} />
         <Route path="/chat" element={<Chat />} />
+        <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import './Header.css';
 
 const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => {
@@ -10,6 +11,11 @@ const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => 
   const notifRef = useRef(null);
   const location = useLocation();
   const path = location.pathname;
+  const { profile } = useAuth();
+
+  const initials = profile?.full_name
+    ? profile.full_name.charAt(0).toUpperCase()
+    : 'U';
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -94,11 +100,11 @@ const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => 
               )}
             </div>
 
-            <Link to="/chat" className="header__icon-btn hide-mobile">
-              <span className="material-symbols-outlined">chat_bubble</span>
-            </Link>
             <Link to="/profile/student" className="header__avatar">
-              <span className="header__avatar-fallback">A</span>
+              {profile?.avatar_url
+                ? <img src={profile.avatar_url} alt="avatar" className="header__avatar-img" />
+                : <span className="header__avatar-fallback">{initials}</span>
+              }
             </Link>
           </div>
         </div>
@@ -142,8 +148,8 @@ const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => 
                 <span>Messages</span>
               </Link>
               <Link
-                to="/home"
-                className="header__drawer-link"
+                to="/settings"
+                className={`header__drawer-link ${path === '/settings' ? 'active' : ''}`}
                 onClick={() => setShowDrawer(false)}
               >
                 <span className="material-symbols-outlined">settings</span>

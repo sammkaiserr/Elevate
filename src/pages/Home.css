@@ -259,9 +259,25 @@
   color: #94a3b8;
 }
 
+.home__vote-btn--active {
+  color: #2563eb !important;
+  background: #eff6ff !important;
+}
+
+.home__vote-btn--active-down {
+  color: #ef4444 !important;
+  background: #fef2f2 !important;
+}
+
 .home__vote-btn .material-symbols-outlined {
   font-size: 1.25rem;
 }
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
 
 .home__post-engage {
   display: flex;

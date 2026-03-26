@@ -9,11 +9,6 @@ const Sidebar = () => {
   return (
     <aside className="sidebar">
       <div className="sidebar__inner">
-        <div>
-          <h2 className="sidebar__section-title">Professional Hub</h2>
-          <p className="sidebar__section-subtitle">Manage your growth</p>
-        </div>
-
         <nav className="sidebar__nav">
           <Link to="/home" className={`sidebar__link ${path === '/home' ? 'active' : ''}`}>
             <span className="material-symbols-outlined">dynamic_feed</span>
@@ -27,7 +22,7 @@ const Sidebar = () => {
             <span className="material-symbols-outlined">chat_bubble</span>
             <span>Messages</span>
           </Link>
-          <Link to="/home" className="sidebar__link sidebar__spacer">
+          <Link to="/settings" className={`sidebar__link sidebar__spacer ${path === '/settings' ? 'active' : ''}`}>
             <span className="material-symbols-outlined">settings</span>
             <span>Settings</span>
           </Link>
