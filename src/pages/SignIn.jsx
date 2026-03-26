@@ -50,14 +50,29 @@ const SignIn = () => {
       } 
       else if (view === 'sign-in') {
         console.log('[SignIn] Attempting sign-in...');
-        const { data, error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        console.log('[SignIn] Response received:', { data: !!data, error: signInError });
-        if (signInError) throw signInError;
-        if (!data?.session) throw new Error('No session returned. Please try again.');
-        navigate('/home');
+        
+        // Use Promise.race to enforce a timeout, in case the user's network drops packets to Supabase
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 12000);
+        
+        try {
+          const { data, error: signInError } = await Promise.race([
+            supabase.auth.signInWithPassword({ email, password }),
+            new Promise((_, reject) => 
+              setTimeout(() => reject(new Error('Network timeout: Could not connect to authentication server. Please check your internet connection or adblocker.')), 12000)
+            )
+          ]);
+          
+          clearTimeout(timeoutId);
+          console.log('[SignIn] Response received:', { data: !!data, error: signInError });
+          
+          if (signInError) throw signInError;
+          if (!data?.session) throw new Error('No session returned. Please try again.');
+          navigate('/home');
+        } catch (err) {
+          clearTimeout(timeoutId);
+          throw err;
+        }
       }
       else if (view === 'forgot-password') {
         const { error: resetError } = await resetPassword(email);
