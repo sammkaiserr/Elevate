@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { supabase } from '../config/supabaseClient';
 import './SignIn.css';
 
 const SignIn = () => {
@@ -48,11 +49,14 @@ const SignIn = () => {
         setTimeout(() => resumeAuthListener(), 500);
       } 
       else if (view === 'sign-in') {
-        const result = await Promise.race([
-          signIn(email, password),
-          new Promise((_, reject) => setTimeout(() => reject(new Error("Sign-in is taking too long. Please try again.")), 15000))
-        ]);
-        if (result.error) throw result.error;
+        console.log('[SignIn] Attempting sign-in...');
+        const { data, error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        console.log('[SignIn] Response received:', { data: !!data, error: signInError });
+        if (signInError) throw signInError;
+        if (!data?.session) throw new Error('No session returned. Please try again.');
         navigate('/home');
       }
       else if (view === 'forgot-password') {
