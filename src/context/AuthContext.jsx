@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { supabase } from '../config/supabaseClient';
 
 const AuthContext = createContext({});
@@ -9,6 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const suppressAuthRedirect = useRef(false);
 
   const fetchProfile = async (userId) => {
     const { data } = await supabase
@@ -31,6 +32,8 @@ export const AuthProvider = ({ children }) => {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        // Skip auth state changes during sign-up to prevent redirect interference
+        if (suppressAuthRedirect.current) return;
         setUser(session?.user ?? null);
         if (session?.user) {
           await fetchProfile(session.user.id);
@@ -44,11 +47,20 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const signUp = async (email, password, fullName) => {
+    // Suppress auth state changes during sign-up to prevent redirect race condition
+    suppressAuthRedirect.current = true;
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { full_name: fullName } },
     });
+    if (error) {
+      suppressAuthRedirect.current = false;
+    }
+    // If signup succeeded, set the user immediately
+    if (!error && data?.user) {
+      setUser(data.user);
+    }
     return { data, error };
   };
 
@@ -78,6 +90,10 @@ export const AuthProvider = ({ children }) => {
     return await supabase.auth.updateUser({ password: newPassword });
   };
 
+  const resumeAuthListener = () => {
+    suppressAuthRedirect.current = false;
+  };
+
   const updateAvatar = async (url) => {
     if (!user) return;
     const { error } = await supabase
@@ -102,6 +118,7 @@ export const AuthProvider = ({ children }) => {
     verifyOtp,
     updatePassword,
     updateAvatar,
+    resumeAuthListener,
   };
 
   return (

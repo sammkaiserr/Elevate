@@ -19,7 +19,7 @@ const SignIn = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   
-  const { signIn, signUp, resetPassword, verifyOtp, updatePassword } = useAuth();
+  const { signIn, signUp, resetPassword, verifyOtp, updatePassword, resumeAuthListener } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -35,9 +35,21 @@ const SignIn = () => {
           setLoading(false);
           return;
         }
-        const { error: signUpError } = await signUp(email, password, fullName);
+        const { data: signUpData, error: signUpError } = await signUp(email, password, fullName);
         if (signUpError) throw signUpError;
-        navigate('/role-selection');
+        
+        // Check if email confirmation is required
+        const isConfirmed = signUpData?.session != null;
+        if (isConfirmed) {
+          // Auto-confirmed: navigate directly
+          navigate('/role-selection');
+        } else {
+          // Email confirmation required OR auto-confirmed without session
+          // Either way, navigate to role selection since user is created
+          navigate('/role-selection');
+        }
+        // Re-enable auth listener after navigation
+        setTimeout(() => resumeAuthListener(), 500);
       } 
       else if (view === 'sign-in') {
         const result = await Promise.race([
