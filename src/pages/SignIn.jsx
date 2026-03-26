@@ -41,18 +41,17 @@ const SignIn = () => {
         // Check if email confirmation is required
         const isConfirmed = signUpData?.session != null;
         if (isConfirmed) {
-          // Auto-confirmed: navigate directly
           navigate('/role-selection');
         } else {
-          // Email confirmation required OR auto-confirmed without session
-          // Either way, navigate to role selection since user is created
           navigate('/role-selection');
         }
-        // Re-enable auth listener after navigation
         setTimeout(() => resumeAuthListener(), 500);
       } 
       else if (view === 'sign-in') {
-        const result = await signIn(email, password);
+        const result = await Promise.race([
+          signIn(email, password),
+          new Promise((_, reject) => setTimeout(() => reject(new Error("Sign-in is taking too long. Please try again.")), 15000))
+        ]);
         if (result.error) throw result.error;
         navigate('/home');
       }
@@ -69,21 +68,19 @@ const SignIn = () => {
           return;
         }
         
-        // 1. Verify the OTP code sent to the email
         const { error: otpError } = await verifyOtp(email, otpCode);
         if (otpError) throw otpError;
         
-        // 2. The user is now logged in (session established). Update their password.
         const { error: updateError } = await updatePassword(newPassword);
         if (updateError) throw updateError;
         
-        // 3. Navigate to home
         navigate('/home');
       }
     } catch (err) {
       setError(err.message || 'An unexpected error occurred.');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const getTitle = () => {
