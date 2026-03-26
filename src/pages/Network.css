@@ -231,6 +231,12 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color var(--transition-normal);
+}
+
+.network__card-name:hover {
+  color: var(--primary);
+  text-decoration: underline;
 }
 
 .network__card-detail {

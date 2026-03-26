@@ -9,6 +9,7 @@ import CreateBlog from '../pages/CreateBlog';
 import Chat from '../pages/Chat';
 import Network from '../pages/Network';
 import Settings from '../pages/Settings';
+import UserProfile from '../pages/UserProfile';
 
 const AppRoutes = () => {
   return (
@@ -23,6 +24,7 @@ const AppRoutes = () => {
         <Route path="/create" element={<CreateBlog />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/profile/user/:userId" element={<UserProfile />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
