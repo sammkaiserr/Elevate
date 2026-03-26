@@ -52,11 +52,7 @@ const SignIn = () => {
         setTimeout(() => resumeAuthListener(), 500);
       } 
       else if (view === 'sign-in') {
-        const result = await Promise.race([
-          signIn(email, password),
-          new Promise((resolve, reject) => setTimeout(() => reject(new Error("Request timed out after 5 seconds. Please check your internet connection and try again.")), 5000))
-        ]);
-        
+        const result = await signIn(email, password);
         if (result.error) throw result.error;
         navigate('/home');
       }
