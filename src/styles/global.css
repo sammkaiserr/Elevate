@@ -2,6 +2,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 
+@tailwind components;
+@tailwind utilities;
+
 /* ============================================
    ELEVATE DESIGN SYSTEM — M3 Color Tokens
    ============================================ */
@@ -306,4 +309,73 @@ img {
 
 @media (min-width: 1025px) {
   .show-tablet-only { display: none !important; }
+}
+
+/* ============================================
+   AI RESUME SCANNER - TAILWIND COMPONENTS
+   ============================================ */
+@layer components {
+  /* Skill Tags */
+  .skill-tag {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide uppercase
+      bg-blue-50 text-blue-700 border border-blue-100
+      dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20
+      hover:bg-blue-100 hover:border-blue-200 hover:shadow-sm hover:dark:bg-blue-500/20
+      transition-all duration-200 cursor-default;
+  }
+
+  .skill-tag-green {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide uppercase
+      bg-emerald-50 text-emerald-700 border border-emerald-100
+      dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20
+      hover:bg-emerald-100 hover:border-emerald-200 hover:shadow-sm hover:dark:bg-emerald-500/20
+      transition-all duration-200 cursor-default;
+  }
+
+  .skill-tag-purple {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide uppercase
+      bg-violet-50 text-violet-700 border border-violet-100
+      dark:bg-violet-500/10 dark:text-violet-400 dark:border-violet-500/20
+      hover:bg-violet-100 hover:border-violet-200 hover:shadow-sm hover:dark:bg-violet-500/20
+      transition-all duration-200 cursor-default;
+  }
+
+  .skill-tag-amber {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide uppercase
+      bg-orange-50 text-orange-700 border border-orange-100
+      dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/20
+      hover:bg-orange-100 hover:border-orange-200 hover:shadow-sm hover:dark:bg-orange-500/20
+      transition-all duration-200 cursor-default;
+  }
+
+  .skill-tag-red {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide uppercase
+      bg-rose-50 text-rose-600 border border-rose-100
+      dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20
+      hover:bg-rose-100 hover:border-rose-200 hover:shadow-sm hover:dark:bg-rose-500/20
+      transition-all duration-200 cursor-default;
+  }
+
+  /* Glass card */
+  .glass-card {
+    @apply bg-white dark:bg-zinc-900/60 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-card
+      hover:shadow-card-hover dark:hover:shadow-glow transition-all duration-300 backdrop-blur-md;
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-600 via-brand-500 to-violet-500;
+  }
+
+  /* Shimmer loading effect */
+  .shimmer-ai {
+    background: linear-gradient(
+      90deg,
+      #f4f4f5 25%,
+      #e4e4e7 50%,
+      #f4f4f5 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+  }
 }

@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { apiFetch } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import MainLayout from '../components/layout/MainLayout';
-import './UserProfile.css';
 
 const UserProfile = () => {
   const { userId } = useParams();
@@ -11,7 +10,7 @@ const UserProfile = () => {
   const { user } = useAuth();
   const [profile, setProfile] = useState(null);
   const [posts, setPosts] = useState([]);
-  const [connectionStatus, setConnectionStatus] = useState(null); // null | 'pending_sent' | 'pending_received' | 'accepted' | 'none'
+  const [connectionStatus, setConnectionStatus] = useState(null);
   const [connectionId, setConnectionId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
@@ -25,12 +24,10 @@ const UserProfile = () => {
         const profileData = await apiFetch(`/profiles/${userId}`);
         setProfile(profileData);
 
-        // Fetch posts by this user
         const allPosts = await apiFetch('/posts');
         const postsData = (allPosts || []).filter(p => p.user_id === userId || p.user_id?._id === userId);
         setPosts(postsData);
 
-        // Fetch connection status if not own profile
         if (user && user.id !== userId) {
           const connections = await apiFetch('/connections');
           const conn = (connections || []).find(c => {
@@ -131,6 +128,20 @@ const UserProfile = () => {
     setActionLoading(false);
   };
 
+  const startConversation = async () => {
+    setActionLoading(true);
+    try {
+      const chat = await apiFetch('/conversations', {
+        method: 'POST',
+        body: JSON.stringify({ partnerId: userId })
+      });
+      navigate('/chat', { state: { selectedChat: chat } });
+    } catch (err) {
+      console.error('Error starting conversation:', err);
+    }
+    setActionLoading(false);
+  };
+
   const getInitials = (name) => {
     if (!name) return '?';
     return name.split(' ').map((w) => w[0]).join('').toUpperCase().slice(0, 2);
@@ -158,11 +169,9 @@ const UserProfile = () => {
   if (loading) {
     return (
       <MainLayout>
-        <div className="user-profile">
-          <div className="user-profile__loading">
-            <div className="user-profile__spinner"></div>
-            <p>Loading profile...</p>
-          </div>
+        <div className="flex justify-center items-center py-20">
+          <div className="w-10 h-10 border-4 border-zinc-200 border-t-blue-600 rounded-full animate-spin"></div>
+          <p className="ml-4 text-zinc-500 dark:text-zinc-400">Loading profile...</p>
         </div>
       </MainLayout>
     );
@@ -171,16 +180,17 @@ const UserProfile = () => {
   if (!profile) {
     return (
       <MainLayout>
-        <div className="user-profile">
-          <div className="user-profile__not-found">
-            <span className="material-symbols-outlined">person_off</span>
-            <h2>Profile not found</h2>
-            <p>This user doesn't exist or their profile is unavailable.</p>
-            <button className="user-profile__back-btn" onClick={() => navigate(-1)}>
-              <span className="material-symbols-outlined">arrow_back</span>
-              Go Back
-            </button>
-          </div>
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <span className="material-symbols-outlined text-6xl text-zinc-400 mb-4">person_off</span>
+          <h2 className="text-2xl font-bold text-zinc-800 dark:text-zinc-200 mb-2">Profile not found</h2>
+          <p className="text-zinc-500 dark:text-zinc-400 mb-6">This user doesn't exist or their profile is unavailable.</p>
+          <button 
+            className="flex items-center gap-2 px-6 py-2.5 bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-medium rounded-xl hover:bg-zinc-300 dark:hover:bg-zinc-700 transition"
+            onClick={() => navigate(-1)}
+          >
+            <span className="material-symbols-outlined">arrow_back</span>
+            Go Back
+          </button>
         </div>
       </MainLayout>
     );
@@ -188,239 +198,263 @@ const UserProfile = () => {
 
   return (
     <MainLayout>
-      <div className="user-profile">
+      <div className="max-w-4xl mx-auto py-8 px-4">
         {/* Back button */}
-        <button className="user-profile__back" onClick={() => navigate(-1)}>
+        <button 
+          className="flex items-center gap-2 px-4 py-2 mb-6 text-zinc-600 dark:text-zinc-400 font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition"
+          onClick={() => navigate(-1)}
+        >
           <span className="material-symbols-outlined">arrow_back</span>
           Back
         </button>
 
-        {/* Profile Header Card */}
-        <div className="user-profile__hero">
-          <div className="user-profile__hero-bg"></div>
-          <div className="user-profile__hero-content">
-            <div className="user-profile__avatar">
+        {/* Profile Hero */}
+        <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800 overflow-hidden mb-8">
+          <div className="h-32 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 opacity-90 relative"></div>
+          
+          <div className="px-6 sm:px-10 pb-8 relative -mt-16 flex flex-col sm:flex-row gap-6 sm:items-end">
+            {/* Avatar */}
+            <div className="relative shrink-0">
               {profile.avatar_url ? (
-                <img src={profile.avatar_url} alt={profile.full_name} />
+                <img 
+                  src={profile.avatar_url} 
+                  alt={profile.full_name} 
+                  className="w-32 h-32 rounded-full border-4 border-white dark:border-zinc-900 object-cover bg-zinc-100 dark:bg-zinc-800"
+                />
               ) : (
-                <div className="user-profile__avatar-placeholder">
+                <div className="w-32 h-32 rounded-full border-4 border-white dark:border-zinc-900 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-4xl font-bold">
                   {getInitials(profile.full_name)}
                 </div>
               )}
-              <div className={`user-profile__role-indicator user-profile__role-indicator--${profile.role || 'student'}`}>
-                <span className="material-symbols-outlined">
+              <div className={`absolute bottom-2 right-2 w-8 h-8 rounded-full border-2 border-white dark:border-zinc-900 flex items-center justify-center text-white ${profile.role === 'professional' ? 'bg-amber-500' : 'bg-emerald-500'}`}>
+                <span className="material-symbols-outlined text-[16px]">
                   {profile.role === 'professional' ? 'work' : 'school'}
                 </span>
               </div>
             </div>
 
-            <div className="user-profile__identity">
-              <h1 className="user-profile__name">{profile.full_name}</h1>
-              <p className="user-profile__headline">
+            {/* Info */}
+            <div className="flex-1 mt-2 sm:mt-16">
+              <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">{profile.full_name}</h1>
+              <p className="text-lg text-zinc-600 dark:text-zinc-400 mt-1">
                 {profile.role === 'professional'
                   ? `${profile.job_title || 'Professional'}${profile.company ? ` at ${profile.company}` : ''}`
                   : `${profile.field_of_study || 'Student'}${profile.university ? ` at ${profile.university}` : ''}`}
               </p>
               {profile.location && (
-                <p className="user-profile__location">
-                  <span className="material-symbols-outlined">location_on</span>
+                <p className="flex items-center gap-1 text-zinc-500 dark:text-zinc-400 text-sm mt-2 font-medium">
+                  <span className="material-symbols-outlined text-[18px]">location_on</span>
                   {profile.location}
                 </p>
               )}
             </div>
 
-            {/* Connection Actions */}
-            {!isOwnProfile && (
-              <div className="user-profile__actions">
-                {connectionStatus === 'none' && (
+            {/* Actions */}
+            <div className="flex flex-wrap gap-3 mt-4 sm:mt-0 sm:self-end">
+              {!isOwnProfile && (
+                <>
+                  {connectionStatus === 'none' && (
+                    <button
+                      className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition shadow-sm"
+                      onClick={sendRequest}
+                      disabled={actionLoading}
+                    >
+                      <span className="material-symbols-outlined text-[20px]">person_add</span>
+                      {actionLoading ? '...' : 'Connect'}
+                    </button>
+                  )}
+                  {connectionStatus === 'pending_sent' && (
+                    <button
+                      className="flex items-center gap-2 px-6 py-2.5 bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-medium rounded-xl transition hover:bg-zinc-300 dark:hover:bg-zinc-700"
+                      onClick={withdrawRequest}
+                      disabled={actionLoading}
+                    >
+                      <span className="material-symbols-outlined text-[20px]">undo</span>
+                      {actionLoading ? '...' : 'Pending'}
+                    </button>
+                  )}
+                  {connectionStatus === 'pending_received' && (
+                    <div className="flex gap-2">
+                      <button
+                        className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl transition shadow-sm"
+                        onClick={acceptRequest}
+                        disabled={actionLoading}
+                      >
+                        <span className="material-symbols-outlined text-[20px]">check</span>
+                        Accept
+                      </button>
+                      <button
+                        className="flex items-center gap-2 px-4 py-2.5 bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-medium rounded-xl transition hover:bg-zinc-300 dark:hover:bg-zinc-700"
+                        onClick={rejectRequest}
+                        disabled={actionLoading}
+                      >
+                        <span className="material-symbols-outlined text-[20px]">close</span>
+                      </button>
+                    </div>
+                  )}
+                  {connectionStatus === 'accepted' && (
+                    <div className="flex items-center gap-2 px-5 py-2.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 font-medium rounded-xl border border-emerald-200 dark:border-emerald-800/50">
+                      <span className="material-symbols-outlined text-[20px]">check_circle</span>
+                      Connected
+                      <button
+                        className="ml-2 hover:bg-emerald-100 dark:hover:bg-emerald-800/50 p-1 rounded-lg transition text-emerald-600 dark:text-emerald-400"
+                        onClick={removeConnection}
+                        disabled={actionLoading}
+                      >
+                        <span className="material-symbols-outlined text-[20px] block">person_remove</span>
+                      </button>
+                    </div>
+                  )}
+
                   <button
-                    className="user-profile__action-btn user-profile__action-btn--connect"
-                    onClick={sendRequest}
+                    className="flex items-center gap-2 px-6 py-2.5 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 font-medium rounded-xl transition shadow-sm border border-indigo-200 dark:border-indigo-800 border-opacity-50 hover:bg-indigo-100 dark:hover:bg-indigo-900/40"
+                    onClick={startConversation}
                     disabled={actionLoading}
                   >
-                    <span className="material-symbols-outlined">person_add</span>
-                    {actionLoading ? 'Sending...' : 'Connect'}
+                    <span className="material-symbols-outlined text-[20px]">chat</span>
+                    Message
                   </button>
-                )}
-                {connectionStatus === 'pending_sent' && (
-                  <button
-                    className="user-profile__action-btn user-profile__action-btn--withdraw"
-                    onClick={withdrawRequest}
-                    disabled={actionLoading}
-                  >
-                    <span className="material-symbols-outlined">undo</span>
-                    {actionLoading ? 'Withdrawing...' : 'Withdraw Request'}
-                  </button>
-                )}
-                {connectionStatus === 'pending_received' && (
-                  <div className="user-profile__action-group">
-                    <button
-                      className="user-profile__action-btn user-profile__action-btn--accept"
-                      onClick={acceptRequest}
-                      disabled={actionLoading}
-                    >
-                      <span className="material-symbols-outlined">check</span>
-                      Accept
-                    </button>
-                    <button
-                      className="user-profile__action-btn user-profile__action-btn--decline"
-                      onClick={rejectRequest}
-                      disabled={actionLoading}
-                    >
-                      <span className="material-symbols-outlined">close</span>
-                      Decline
-                    </button>
-                  </div>
-                )}
-                {connectionStatus === 'accepted' && (
-                  <div className="user-profile__connected-badge">
-                    <span className="material-symbols-outlined">check_circle</span>
-                    Connected
-                    <button
-                      className="user-profile__action-btn user-profile__action-btn--remove-sm"
-                      onClick={removeConnection}
-                      disabled={actionLoading}
-                    >
-                      <span className="material-symbols-outlined">person_remove</span>
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-            {isOwnProfile && (
-              <button
-                className="user-profile__action-btn user-profile__action-btn--edit"
-                onClick={() => navigate('/settings')}
-              >
-                <span className="material-symbols-outlined">edit</span>
-                Edit Profile
-              </button>
-            )}
+                </>
+              )}
+              {isOwnProfile && (
+                <button
+                  className="flex items-center gap-2 px-6 py-2.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-medium rounded-xl transition hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                  onClick={() => navigate('/settings')}
+                >
+                  <span className="material-symbols-outlined text-[20px]">edit</span>
+                  Edit Profile
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Info Cards */}
-        <div className="user-profile__sections">
-          {/* About */}
-          {profile.bio && (
-            <div className="user-profile__card">
-              <h2 className="user-profile__card-title">
-                <span className="material-symbols-outlined">info</span>
-                About
-              </h2>
-              <p className="user-profile__bio">{profile.bio}</p>
-            </div>
-          )}
-
-          {/* Details */}
-          <div className="user-profile__card">
-            <h2 className="user-profile__card-title">
-              <span className="material-symbols-outlined">badge</span>
-              Details
-            </h2>
-            <div className="user-profile__details-grid">
-              {profile.role && (
-                <div className="user-profile__detail">
-                  <span className="user-profile__detail-label">Role</span>
-                  <span className="user-profile__detail-value">{profile.role === 'professional' ? 'Working Professional' : 'Student'}</span>
-                </div>
-              )}
-              {profile.university && (
-                <div className="user-profile__detail">
-                  <span className="user-profile__detail-label">University</span>
-                  <span className="user-profile__detail-value">{profile.university}</span>
-                </div>
-              )}
-              {profile.field_of_study && (
-                <div className="user-profile__detail">
-                  <span className="user-profile__detail-label">Field of Study</span>
-                  <span className="user-profile__detail-value">{profile.field_of_study}</span>
-                </div>
-              )}
-              {profile.graduation_year && (
-                <div className="user-profile__detail">
-                  <span className="user-profile__detail-label">Graduation Year</span>
-                  <span className="user-profile__detail-value">{profile.graduation_year}</span>
-                </div>
-              )}
-              {profile.company && (
-                <div className="user-profile__detail">
-                  <span className="user-profile__detail-label">Company</span>
-                  <span className="user-profile__detail-value">{profile.company}</span>
-                </div>
-              )}
-              {profile.job_title && (
-                <div className="user-profile__detail">
-                  <span className="user-profile__detail-label">Job Title</span>
-                  <span className="user-profile__detail-value">{profile.job_title}</span>
-                </div>
-              )}
-              {profile.created_at && (
-                <div className="user-profile__detail">
-                  <span className="user-profile__detail-label">Joined</span>
-                  <span className="user-profile__detail-value">{formatDate(profile.created_at)}</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Skills */}
-          {profile.skills && profile.skills.length > 0 && (
-            <div className="user-profile__card">
-              <h2 className="user-profile__card-title">
-                <span className="material-symbols-outlined">psychology</span>
-                Skills
-              </h2>
-              <div className="user-profile__skills">
-                {profile.skills.map((skill, i) => (
-                  <span key={i} className="user-profile__skill">{skill}</span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Posts */}
-          <div className="user-profile__card">
-            <h2 className="user-profile__card-title">
-              <span className="material-symbols-outlined">article</span>
-              Posts ({posts.length})
-            </h2>
-            {posts.length === 0 ? (
-              <div className="user-profile__no-posts">
-                <span className="material-symbols-outlined">edit_note</span>
-                <p>No posts yet</p>
-              </div>
-            ) : (
-              <div className="user-profile__posts">
-                {posts.map((post) => (
-                  <div key={post.id} className="user-profile__post">
-                    <h3 className="user-profile__post-title">{post.title}</h3>
-                    <p className="user-profile__post-excerpt">
-                      {post.content?.substring(0, 150)}{post.content?.length > 150 ? '...' : ''}
-                    </p>
-                    <div className="user-profile__post-meta">
-                      <span>{timeAgo(post.created_at)}</span>
-                      <span>•</span>
-                      <span>
-                        <span className="material-symbols-outlined">thumb_up</span>
-                        {post.upvotes || 0}
-                      </span>
-                      <span>
-                        <span className="material-symbols-outlined">chat_bubble</span>
-                        {post.comment_count || 0}
-                      </span>
-                    </div>
-                    {post.tags && post.tags.length > 0 && (
-                      <div className="user-profile__post-tags">
-                        {post.tags.map((tag, i) => (
-                          <span key={i} className="user-profile__tag">#{tag}</span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
+        {/* Content grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-1 space-y-6">
+            {/* About */}
+            {profile.bio && (
+              <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800 p-6">
+                <h2 className="flex items-center gap-2 text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-4">
+                  <span className="material-symbols-outlined text-zinc-400">info</span>
+                  About
+                </h2>
+                <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed text-sm whitespace-pre-wrap">{profile.bio}</p>
               </div>
             )}
+
+            {/* Details */}
+            <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800 p-6">
+              <h2 className="flex items-center gap-2 text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-4">
+                <span className="material-symbols-outlined text-zinc-400">badge</span>
+                Details
+              </h2>
+              <div className="space-y-4">
+                {profile.role && (
+                  <div>
+                    <span className="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">Role</span>
+                    <span className="text-sm font-medium text-zinc-800 dark:text-zinc-200">{profile.role === 'professional' ? 'Working Professional' : 'Student'}</span>
+                  </div>
+                )}
+                {profile.university && (
+                  <div>
+                    <span className="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">University</span>
+                    <span className="text-sm font-medium text-zinc-800 dark:text-zinc-200">{profile.university}</span>
+                  </div>
+                )}
+                {profile.field_of_study && (
+                  <div>
+                    <span className="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">Field of Study</span>
+                    <span className="text-sm font-medium text-zinc-800 dark:text-zinc-200">{profile.field_of_study}</span>
+                  </div>
+                )}
+                {profile.graduation_year && (
+                  <div>
+                    <span className="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">Graduation Year</span>
+                    <span className="text-sm font-medium text-zinc-800 dark:text-zinc-200">{profile.graduation_year}</span>
+                  </div>
+                )}
+                {profile.company && (
+                  <div>
+                    <span className="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">Company</span>
+                    <span className="text-sm font-medium text-zinc-800 dark:text-zinc-200">{profile.company}</span>
+                  </div>
+                )}
+                {profile.job_title && (
+                  <div>
+                    <span className="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">Job Title</span>
+                    <span className="text-sm font-medium text-zinc-800 dark:text-zinc-200">{profile.job_title}</span>
+                  </div>
+                )}
+                {profile.created_at && (
+                  <div>
+                    <span className="block text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-1">Joined</span>
+                    <span className="text-sm font-medium text-zinc-800 dark:text-zinc-200">{formatDate(profile.created_at)}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Skills */}
+            {profile.skills && profile.skills.length > 0 && (
+              <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800 p-6">
+                <h2 className="flex items-center gap-2 text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-4">
+                  <span className="material-symbols-outlined text-zinc-400">psychology</span>
+                  Skills
+                </h2>
+                <div className="flex flex-wrap gap-2">
+                  {profile.skills.map((skill, i) => (
+                    <span key={i} className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-800/40 font-medium text-xs rounded-lg">{skill}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="lg:col-span-2 space-y-6">
+            {/* Posts */}
+            <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800 p-6">
+              <h2 className="flex items-center gap-2 text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-6">
+                <span className="material-symbols-outlined text-zinc-400">article</span>
+                Posts ({posts.length})
+              </h2>
+              {posts.length === 0 ? (
+                <div className="flex flex-col items-center justify-center p-8 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-100 dark:border-zinc-800">
+                  <span className="material-symbols-outlined text-4xl text-zinc-400 mb-3">edit_note</span>
+                  <p className="text-zinc-500 dark:text-zinc-400">No posts yet</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {posts.map((post) => (
+                    <div key={post.id} className="p-5 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-zinc-100 hover:dark:bg-zinc-800 transition rounded-xl border border-zinc-200 dark:border-zinc-800">
+                      <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">{post.title}</h3>
+                      <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4 leading-relaxed">
+                        {post.content?.replace(/<[^>]+>/g, '').substring(0, 150)}{post.content?.length > 150 ? '...' : ''}
+                      </p>
+                      <div className="flex items-center gap-4 text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-4">
+                        <span>{timeAgo(post.created_at)}</span>
+                        <div className="w-1 h-1 rounded-full bg-zinc-300 dark:bg-zinc-700"></div>
+                        <span className="flex items-center gap-1">
+                          <span className="material-symbols-outlined text-[16px]">thumb_up</span>
+                          {post.upvotes || 0}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <span className="material-symbols-outlined text-[16px]">chat_bubble</span>
+                          {post.comment_count || 0}
+                        </span>
+                      </div>
+                      {post.tags && post.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {post.tags.map((tag, i) => (
+                            <span key={i} className="text-xs font-semibold tracking-wide text-zinc-500 dark:text-zinc-400 uppercase">#{tag}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -11,6 +11,7 @@ import Chat from '../pages/Chat';
 import Network from '../pages/Network';
 import Settings from '../pages/Settings';
 import UserProfile from '../pages/UserProfile';
+import ResumeAnalyzer from '../pages/ResumeAnalyzer';
 
 const ProtectedRoute = ({ children }) => {
   const { isSignedIn, isLoaded } = useClerkAuth();
@@ -33,6 +34,7 @@ const AppRoutes = () => {
         <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
         <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
         <Route path="/profile/user/:userId" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+        <Route path="/resume" element={<ProtectedRoute><ResumeAnalyzer /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

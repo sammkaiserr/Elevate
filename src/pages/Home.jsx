@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import MainLayout from '../components/layout/MainLayout';
 import { apiFetch } from '../config/api';
 import { useAuth } from '../context/AuthContext';
+import CommentList from '../components/comment/CommentList';
 import './Home.css';
 
 const Home = () => {
@@ -10,6 +11,7 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState('');
   const [votedPosts, setVotedPosts] = useState({}); // { postId: 'up' | 'down' | null }
+  const [expandedComments, setExpandedComments] = useState({});
   const { user, profile } = useAuth();
 
   useEffect(() => {
@@ -211,7 +213,10 @@ const Home = () => {
                         </button>
                       </div>
                       <div className="home__post-engage">
-                        <button className="home__engage-btn">
+                        <button 
+                          className={`home__engage-btn ${expandedComments[post.id] ? 'bg-zinc-100 dark:bg-zinc-800' : ''}`}
+                          onClick={() => setExpandedComments(prev => ({ ...prev, [post.id]: !prev[post.id] }))}
+                        >
                           <span className="material-symbols-outlined">chat_bubble</span>
                           <span>Comment{post.comment_count > 0 ? ` (${post.comment_count})` : ''}</span>
                         </button>
@@ -221,6 +226,19 @@ const Home = () => {
                         </button>
                       </div>
                     </div>
+                    {/* COMMENT LIST */}
+                    {expandedComments[post.id] && (
+                      <div className="px-4 pb-4">
+                        <CommentList 
+                          postId={post.id} 
+                          onCommentAdded={() => {
+                            setPosts(prev => prev.map(p => 
+                              p.id === post.id ? { ...p, comment_count: (p.comment_count || 0) + 1 } : p
+                            ));
+                          }} 
+                        />
+                      </div>
+                    )}
                   </div>
                 </article>
               );

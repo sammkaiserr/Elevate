@@ -1,10 +1,30 @@
 import express from 'express';
 import { requireAuth, getAuth } from '@clerk/express';
-import Profile from '../models/Profile.js';
+import Profile from '../_models/Profile.js';
 
 const router = express.Router();
 
+router.get('/', async (req, res) => {
+  try {
+    const keyword = req.query.search
+      ? {
+          $or: [
+            { full_name: { $regex: req.query.search, $options: 'i' } },
+            { email: { $regex: req.query.search, $options: 'i' } },
+          ],
+        }
+      : {};
+    
+    // Auth might not be strictly necessary, but helpful if we want to exclude current user
+    const users = await Profile.find(keyword).limit(10);
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.get('/:id', async (req, res) => {
+
   try {
     const profile = await Profile.findById(req.params.id);
     if (!profile) return res.status(404).json({ error: 'Profile not found' });

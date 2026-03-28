@@ -2,8 +2,9 @@ import mongoose from 'mongoose';
 
 const messageSchema = new mongoose.Schema({
   sender_id: { type: String, ref: 'Profile', required: true },
-  receiver_id: { type: String, ref: 'Profile', required: true },
-  content: { type: String, required: true },
+  content: { type: String, trim: true },
+  image_url: { type: String }, // Base64 string or remote URL
+  conversation_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Conversation', required: true },
   is_read: { type: Boolean, default: false }
 }, {
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }

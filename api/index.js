@@ -3,14 +3,31 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import { clerkMiddleware } from '@clerk/express';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 
-import profileRoutes from './routes/profiles.js';
-import postRoutes from './routes/posts.js';
-import connectionRoutes from './routes/connections.js';
-import messageRoutes from './routes/messages.js';
-import notificationRoutes from './routes/notifications.js';
+import profileRoutes from './_routes/profiles.js';
+import postRoutes from './_routes/posts.js';
+import connectionRoutes from './_routes/connections.js';
+import messageRoutes from './_routes/messages.js';
+import notificationRoutes from './_routes/notifications.js';
+import conversationRoutes from './_routes/conversations.js';
+import commentRoutes from './_routes/comments.js';
+
+// Resume AI
+import parseResumeRoute from './_routes/resume/parseResume.js';
 
 const app = express();
+const httpServer = createServer(app);
+
+// Initialize Socket.io
+const io = new Server(httpServer, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  },
+  pingTimeout: 60000,
+});
 
 // Middleware
 app.use(cors());
@@ -53,10 +70,52 @@ app.use('/api/posts', postRoutes);
 app.use('/api/connections', connectionRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/conversations', conversationRoutes);
+app.use('/api/comments', commentRoutes);
+
+app.use('/api/resume/upload', parseResumeRoute);
 
 // Health Check
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Elevate Backend is running!' });
 });
 
+// Socket.io Logic
+io.on('connection', (socket) => {
+  socket.on('setup', (userData) => {
+    socket.join(userData); // userData is userId
+    socket.emit('connected');
+  });
+
+  socket.on('join chat', (room) => {
+    socket.join(room);
+  });
+
+  socket.on('new message', (newMessageReceived) => {
+    var chat = newMessageReceived.conversation_id;
+    if (!chat || !chat.users) return;
+
+    chat.users.forEach((user) => {
+      // Assume user._id or user string based on how it is populated
+      const userId = user._id || user; 
+      // Do not send the message back to the sender
+      const senderId = newMessageReceived.sender_id._id || newMessageReceived.sender_id;
+      if (userId === senderId) return;
+
+      socket.in(userId).emit('message received', newMessageReceived);
+    });
+  });
+  
+  socket.on('typing', (room) => socket.in(room).emit('typing'));
+  socket.on('stop typing', (room) => socket.in(room).emit('stop typing'));
+});
+
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 5001;
+  httpServer.listen(PORT, () => {
+    console.log(`Development server running on port ${PORT}`);
+  });
+}
+
+// Export the Express app for serverless deployments (Vercel)
 export default app;

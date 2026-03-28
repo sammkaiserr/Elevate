@@ -1,6 +1,6 @@
 import express from 'express';
 import { requireAuth, getAuth } from '@clerk/express';
-import Post from '../models/Post.js';
+import Post from '../_models/Post.js';
 
 const router = express.Router();
 

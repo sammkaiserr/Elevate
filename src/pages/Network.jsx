@@ -174,8 +174,8 @@ const Network = () => {
   const sentCount = pendingSent.length;
 
   const renderUserCard = (profile, actions) => (
-    <div className="network__card" key={profile?.id || Math.random()}>
-      <div className="network__card-avatar" onClick={() => navigate(`/profile/user/${profile?.id}`)} style={{ cursor: 'pointer' }}>
+    <div className="network__card" key={profile?._id || profile?.id || Math.random()}>
+      <div className="network__card-avatar" onClick={() => navigate(`/profile/user/${profile?._id || profile?.id}`)} style={{ cursor: 'pointer' }}>
         {profile?.avatar_url ? (
           <img src={profile.avatar_url} alt={profile.full_name} />
         ) : (
@@ -190,7 +190,7 @@ const Network = () => {
         </div>
       </div>
       <div className="network__card-info">
-        <h3 className="network__card-name" onClick={() => navigate(`/profile/user/${profile?.id}`)} style={{ cursor: 'pointer' }}>{profile?.full_name || 'Unknown User'}</h3>
+        <h3 className="network__card-name" onClick={() => navigate(`/profile/user/${profile?._id || profile?.id}`)} style={{ cursor: 'pointer' }}>{profile?.full_name || 'Unknown User'}</h3>
         <p className="network__card-detail">
           {profile?.role === 'professional'
             ? `${profile?.job_title || 'Professional'}${profile?.company ? ` at ${profile.company}` : ''}`

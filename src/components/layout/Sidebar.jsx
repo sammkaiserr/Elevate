@@ -23,6 +23,10 @@ const Sidebar = () => {
             <span className="material-symbols-outlined">chat_bubble</span>
             <span>Messages</span>
           </Link>
+          <Link to="/resume" className={`sidebar__link ${path === '/resume' ? 'active' : ''}`}>
+            <span className="material-symbols-outlined">document_scanner</span>
+            <span>Resume AI</span>
+          </Link>
           <Link to="/settings" className={`sidebar__link sidebar__spacer ${path === '/settings' ? 'active' : ''}`}>
             <span className="material-symbols-outlined">settings</span>
             <span>Settings</span>
