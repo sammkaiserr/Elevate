@@ -236,7 +236,7 @@ const Home = () => {
                         </button>
                       </div>
                       <div className="home__post-engage">
-                        <button 
+                        <button
                           className={`home__engage-btn ${expandedComments[post.id] ? 'bg-zinc-100 dark:bg-zinc-800' : ''}`}
                           onClick={() => setExpandedComments(prev => ({ ...prev, [post.id]: !prev[post.id] }))}
                         >
@@ -252,13 +252,13 @@ const Home = () => {
                     {/* COMMENT LIST */}
                     {expandedComments[post.id] && (
                       <div className="px-4 pb-4">
-                        <CommentList 
-                          postId={post.id} 
+                        <CommentList
+                          postId={post.id}
                           onCommentAdded={() => {
-                            setPosts(prev => prev.map(p => 
+                            setPosts(prev => prev.map(p =>
                               p.id === post.id ? { ...p, comment_count: (p.comment_count || 0) + 1 } : p
                             ));
-                          }} 
+                          }}
                         />
                       </div>
                     )}

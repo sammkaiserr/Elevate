@@ -15,6 +15,8 @@ const StudentProfileSetup = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [myPosts, setMyPosts] = useState([]);
+  const [archivedPosts, setArchivedPosts] = useState([]);
+  const [activeTab, setActiveTab] = useState('published');
   const [postsLoading, setPostsLoading] = useState(true);
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [openMenuId, setOpenMenuId] = useState(null);
@@ -77,6 +79,9 @@ const StudentProfileSetup = () => {
       const myPostsData = (allPosts || []).filter(p => !p.archived && (p.user_id === user.id || p.user_id?._id === user.id));
       myPostsData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
       setMyPosts(myPostsData);
+
+      const archData = await apiFetch('/posts/archived');
+      setArchivedPosts(archData || []);
     } catch (err) {
       console.error('Error fetching posts:', err);
     }
@@ -164,7 +169,24 @@ const StudentProfileSetup = () => {
         body: JSON.stringify({ archived: true })
       });
       setMyPosts(prev => prev.filter(p => (p.id || p._id) !== postId));
+      setArchivedPosts(prev => [post, ...prev]);
       showToast('Post archived.');
+    } catch (err) {
+      console.error(err);
+    }
+    setOpenMenuId(null);
+  };
+
+  const handleUnarchivePost = async (post) => {
+    try {
+      const postId = post.id || post._id;
+      await apiFetch(`/posts/${postId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ archived: false })
+      });
+      setArchivedPosts(prev => prev.filter(p => (p.id || p._id) !== postId));
+      setMyPosts(prev => [post, ...prev]);
+      showToast('Post unarchived.');
     } catch (err) {
       console.error(err);
     }
@@ -176,7 +198,11 @@ const StudentProfileSetup = () => {
     try {
       const postId = post.id || post._id;
       await apiFetch(`/posts/${postId}`, { method: 'DELETE' });
-      setMyPosts(prev => prev.filter(p => (p.id || p._id) !== postId));
+      if (activeTab === 'published') {
+        setMyPosts(prev => prev.filter(p => (p.id || p._id) !== postId));
+      } else {
+        setArchivedPosts(prev => prev.filter(p => (p.id || p._id) !== postId));
+      }
       showToast('Post deleted.');
     } catch (err) {
       console.error(err);
@@ -444,9 +470,18 @@ const StudentProfileSetup = () => {
           {/* User Posts Section */}
           {!isEditing && (
             <section className="student-profile__posts-section" style={{ marginTop: '2.5rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h3 style={{ fontSize: '1.25rem', color: 'var(--text-primary)', margin: 0 }}>My Posts</h3>
-                <Link to="/create" className="btn-gradient" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', borderRadius: '8px', color: 'white', textDecoration: 'none', fontWeight: '500', fontSize: '0.875rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+                  <h3 
+                    onClick={() => setActiveTab('published')} 
+                    style={{ fontSize: '1.1rem', color: activeTab === 'published' ? 'var(--text-primary)' : 'var(--text-secondary)', margin: 0, cursor: 'pointer', borderBottom: activeTab === 'published' ? '2px solid var(--primary)' : '2px solid transparent', paddingBottom: '0.5rem', transition: 'all 0.2s', fontWeight: activeTab === 'published' ? '600' : '500' }}
+                  >My Posts</h3>
+                  <h3 
+                    onClick={() => setActiveTab('archived')} 
+                    style={{ fontSize: '1.1rem', color: activeTab === 'archived' ? 'var(--text-primary)' : 'var(--text-secondary)', margin: 0, cursor: 'pointer', borderBottom: activeTab === 'archived' ? '2px solid var(--primary)' : '2px solid transparent', paddingBottom: '0.5rem', transition: 'all 0.2s', fontWeight: activeTab === 'archived' ? '600' : '500' }}
+                  >Archived</h3>
+                </div>
+                <Link to="/create" className="btn-gradient" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', borderRadius: '8px', color: 'white', textDecoration: 'none', fontWeight: '500', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
                   <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>add</span>
                   New Post
                 </Link>
@@ -454,7 +489,7 @@ const StudentProfileSetup = () => {
 
               {postsLoading ? (
                 <p style={{ color: 'var(--text-secondary)' }}>Loading posts...</p>
-              ) : myPosts.length === 0 ? (
+              ) : (activeTab === 'published' ? myPosts : archivedPosts).length === 0 ? (
                 <div style={{ background: 'white', padding: '3rem 2rem', borderRadius: '16px', border: '1px solid var(--border-color)', textAlign: 'center' }}>
                   <span className="material-symbols-outlined" style={{ fontSize: '3rem', color: 'var(--border-color)', marginBottom: '1rem' }}>article</span>
                   <h4 style={{ margin: '0 0 0.5rem', color: 'var(--text-primary)', fontSize: '1.125rem' }}>No posts published yet</h4>
@@ -466,8 +501,8 @@ const StudentProfileSetup = () => {
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }} ref={menuRef}>
-                  {myPosts.map(post => (
-                    <article key={post.id} style={{ background: 'white', padding: '1.5rem', borderRadius: '16px', border: '1px solid var(--border-color)', position: 'relative' }}>
+                  {(activeTab === 'published' ? myPosts : archivedPosts).map(post => (
+                    <article key={post.id} style={{ background: 'white', padding: '1.5rem', borderRadius: '16px', border: '1px solid var(--border-color)', position: 'relative', opacity: activeTab === 'archived' ? 0.8 : 1 }}>
                       {/* Three-dot action menu */}
                       <div style={{ position: 'absolute', top: '1rem', right: '1rem' }}>
                         <button
@@ -493,15 +528,27 @@ const StudentProfileSetup = () => {
                               <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>edit</span>
                               Edit
                             </button>
-                            <button
-                              onClick={() => handleArchivePost(post)}
-                              style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%', padding: '0.75rem 1rem', border: 'none', background: 'none', cursor: 'pointer', fontSize: '0.875rem', color: '#64748b', textAlign: 'left' }}
-                              onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
-                              onMouseLeave={e => e.currentTarget.style.background = 'none'}
-                            >
-                              <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>archive</span>
-                              Archive
-                            </button>
+                            {activeTab === 'published' ? (
+                              <button
+                                onClick={() => handleArchivePost(post)}
+                                style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%', padding: '0.75rem 1rem', border: 'none', background: 'none', cursor: 'pointer', fontSize: '0.875rem', color: '#64748b', textAlign: 'left' }}
+                                onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
+                                onMouseLeave={e => e.currentTarget.style.background = 'none'}
+                              >
+                                <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>archive</span>
+                                Archive
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => handleUnarchivePost(post)}
+                                style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%', padding: '0.75rem 1rem', border: 'none', background: 'none', cursor: 'pointer', fontSize: '0.875rem', color: '#3b82f6', textAlign: 'left' }}
+                                onMouseEnter={e => e.currentTarget.style.background = '#eff6ff'}
+                                onMouseLeave={e => e.currentTarget.style.background = 'none'}
+                              >
+                                <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>unarchive</span>
+                                Unarchive
+                              </button>
+                            )}
                             <button
                               onClick={() => handleDeletePost(post)}
                               style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%', padding: '0.75rem 1rem', border: 'none', background: 'none', cursor: 'pointer', fontSize: '0.875rem', color: '#ef4444', textAlign: 'left', borderTop: '1px solid #f1f5f9' }}

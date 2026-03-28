@@ -195,7 +195,7 @@ const UserProfile = () => {
           <span className="material-symbols-outlined text-6xl text-zinc-400 mb-4">person_off</span>
           <h2 className="text-2xl font-bold text-zinc-800 dark:text-zinc-200 mb-2">Profile not found</h2>
           <p className="text-zinc-500 dark:text-zinc-400 mb-6">This user doesn't exist or their profile is unavailable.</p>
-          <button 
+          <button
             className="flex items-center gap-2 px-6 py-2.5 bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-medium rounded-xl hover:bg-zinc-300 dark:hover:bg-zinc-700 transition"
             onClick={() => navigate(-1)}
           >
@@ -211,7 +211,7 @@ const UserProfile = () => {
     <MainLayout>
       <div className="max-w-4xl mx-auto py-8 px-4">
         {/* Back button */}
-        <button 
+        <button
           className="flex items-center gap-2 px-4 py-2 mb-6 text-zinc-600 dark:text-zinc-400 font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition"
           onClick={() => navigate(-1)}
         >
@@ -222,14 +222,14 @@ const UserProfile = () => {
         {/* Profile Hero */}
         <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800 overflow-hidden mb-8">
           <div className="h-32 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 opacity-90 relative"></div>
-          
+
           <div className="px-6 sm:px-10 pb-8 relative -mt-16 flex flex-col sm:flex-row gap-6 sm:items-end">
             {/* Avatar */}
             <div className="relative shrink-0">
               {profile.avatar_url ? (
-                <img 
-                  src={profile.avatar_url} 
-                  alt={profile.full_name} 
+                <img
+                  src={profile.avatar_url}
+                  alt={profile.full_name}
                   className="w-32 h-32 rounded-full border-4 border-white dark:border-zinc-900 object-cover bg-zinc-100 dark:bg-zinc-800"
                 />
               ) : (
