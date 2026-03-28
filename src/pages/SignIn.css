@@ -334,3 +334,18 @@
   margin-top: 0.25rem;
   line-height: 1.5;
 }
+
+/* ============================================
+   CLERK WIDGET INTEGRATION
+   ============================================ */
+.signin__clerk-container {
+  display: flex;
+  justify-content: center;
+}
+
+/* Remove Clerk's default card shadow so it blends in */
+.signin__clerk-container .cl-card {
+  box-shadow: none;
+  background: transparent;
+}
+

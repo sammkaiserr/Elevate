@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Header from '../components/layout/Header';
 import BottomNav from '../components/layout/BottomNav';
 import { useAuth } from '../context/AuthContext';
-import { supabase } from '../config/supabaseClient';
+import { apiFetch } from '../config/api';
 import './StudentProfileSetup.css';
 
 const interestsList = ['Product Design', 'Machine Learning', 'Entrepreneurship', 'Public Speaking', 'Fintech', 'Climate Tech'];
@@ -38,6 +38,7 @@ const StudentProfileSetup = () => {
   const [gradYear, setGradYear] = useState('2026');
   const [activeInterests, setActiveInterests] = useState([]);
   const [localAvatar, setLocalAvatar] = useState(null);
+  const [customInterest, setCustomInterest] = useState('');
 
   useEffect(() => {
     if (!user) { navigate('/'); return; }
@@ -71,13 +72,14 @@ const StudentProfileSetup = () => {
   const fetchMyPosts = async () => {
     if (!user) return;
     setPostsLoading(true);
-    const { data, error } = await supabase
-      .from('posts')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('archived', false)
-      .order('created_at', { ascending: false });
-    if (!error && data) setMyPosts(data);
+    try {
+      const allPosts = await apiFetch('/posts');
+      const myPostsData = (allPosts || []).filter(p => !p.archived && (p.user_id === user.id || p.user_id?._id === user.id));
+      myPostsData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      setMyPosts(myPostsData);
+    } catch (err) {
+      console.error('Error fetching posts:', err);
+    }
     setPostsLoading(false);
   };
 
@@ -92,15 +94,36 @@ const StudentProfileSetup = () => {
     );
   };
 
+  const handleAddCustomInterest = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addCustom();
+    }
+  };
+
+  const addCustom = () => {
+    if (customInterest.trim() && !activeInterests.includes(customInterest.trim())) {
+      setActiveInterests(prev => [...prev, customInterest.trim()]);
+    }
+    setCustomInterest('');
+  };
+
   const handleSaveProfile = async () => {
     if (!user) return;
     setLoading(true);
-    const { error } = await supabase.from('profiles').update({
-      full_name: fullName, dob, location, university,
-      field_of_study: major, graduation_year: gradYear, skills: activeInterests,
-    }).eq('id', user.id);
-    if (error) { alert('Error saving profile: ' + error.message); }
-    else { await fetchProfile(user.id); setIsEditing(false); }
+    try {
+      await apiFetch(`/profiles/${user.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          full_name: fullName, dob, location, university,
+          field_of_study: major, graduation_year: gradYear, skills: activeInterests,
+        })
+      });
+      await fetchProfile(user.id); 
+      setIsEditing(false);
+    } catch (error) {
+      alert('Error saving profile: ' + error.message);
+    }
     setLoading(false);
   };
 
@@ -110,22 +133,22 @@ const StudentProfileSetup = () => {
     const file = e.target.files[0];
     if (!file || !user) return;
     setAvatarUploading(true);
-    try {
-      const ext = file.name.split('.').pop();
-      const path = `${user.id}/avatar.${ext}`;
-      const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(path, file, { upsert: true });
-      if (uploadError) throw uploadError;
-      const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path);
-      const publicUrl = urlData.publicUrl + '?t=' + Date.now();
-      setLocalAvatar(publicUrl);
-      await updateAvatar(publicUrl);
-      showToast('Profile photo updated!');
-    } catch (err) {
-      alert('Upload failed: ' + err.message);
-    }
-    setAvatarUploading(false);
+    
+    // Read file as Base64 for MVP MongoDB storage
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+       try {
+         const publicUrl = reader.result; // data:image/png;base64,...
+         setLocalAvatar(publicUrl);
+         // Update in database using apiFetch instead of auth sync directly if needed, but updateAvatar in AuthContext does it.
+         await updateAvatar(publicUrl);
+         showToast('Profile photo updated!');
+       } catch (err) {
+         alert('Upload failed: ' + err.message);
+       }
+       setAvatarUploading(false);
+    };
+    reader.readAsDataURL(file);
   };
 
   // Post actions
@@ -134,20 +157,29 @@ const StudentProfileSetup = () => {
   };
 
   const handleArchivePost = async (post) => {
-    const { error } = await supabase.from('posts').update({ archived: true }).eq('id', post.id);
-    if (!error) {
-      setMyPosts(prev => prev.filter(p => p.id !== post.id));
+    try {
+      const postId = post.id || post._id;
+      await apiFetch(`/posts/${postId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ archived: true })
+      });
+      setMyPosts(prev => prev.filter(p => (p.id || p._id) !== postId));
       showToast('Post archived.');
+    } catch (err) {
+      console.error(err);
     }
     setOpenMenuId(null);
   };
 
   const handleDeletePost = async (post) => {
     if (!window.confirm('Are you sure you want to permanently delete this post?')) return;
-    const { error } = await supabase.from('posts').delete().eq('id', post.id);
-    if (!error) {
-      setMyPosts(prev => prev.filter(p => p.id !== post.id));
+    try {
+      const postId = post.id || post._id;
+      await apiFetch(`/posts/${postId}`, { method: 'DELETE' });
+      setMyPosts(prev => prev.filter(p => (p.id || p._id) !== postId));
       showToast('Post deleted.');
+    } catch (err) {
+      console.error(err);
     }
     setOpenMenuId(null);
   };
@@ -235,19 +267,19 @@ const StudentProfileSetup = () => {
                   <div className="student-profile__grid" style={{ marginTop: '1.5rem' }}>
                     <div className="student-profile__field">
                       <label>Full Name</label>
-                      <input type="text" value={fullName} onChange={e => setFullName(e.target.value)} placeholder="e.g. Alex Rivera" />
+                      <input type="text" value={fullName} onChange={e => setFullName(e.target.value)} style={{ color: '#000', fontWeight: '500' }} />
                     </div>
                     <div className="student-profile__field">
                       <label>Date of Birth</label>
                       <div className="field-icon">
-                        <input type="date" value={dob} onChange={e => setDob(e.target.value)} />
+                        <input type="date" value={dob} onChange={e => setDob(e.target.value)} style={{ color: '#000', fontWeight: '500' }} />
                         <span className="material-symbols-outlined" style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--icon-color)' }}>calendar_today</span>
                       </div>
                     </div>
                     <div className="student-profile__field">
                       <label>Current Location</label>
                       <div className="field-icon">
-                        <input type="text" value={location} onChange={e => setLocation(e.target.value)} placeholder="City, Country" />
+                        <input type="text" value={location} onChange={e => setLocation(e.target.value)} style={{ color: '#000', fontWeight: '500' }} />
                         <span className="material-symbols-outlined" style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--icon-color)' }}>location_on</span>
                       </div>
                     </div>
@@ -262,11 +294,11 @@ const StudentProfileSetup = () => {
                   <div className="student-profile__grid" style={{ marginTop: '1.5rem' }}>
                     <div className="student-profile__field full-width">
                       <label>University / College</label>
-                      <input type="text" value={university} onChange={e => setUniversity(e.target.value)} placeholder="e.g. Stanford University" />
+                      <input type="text" value={university} onChange={e => setUniversity(e.target.value)} style={{ color: '#000', fontWeight: '500' }} />
                     </div>
                     <div className="student-profile__field">
                       <label>Course / Major</label>
-                      <input type="text" value={major} onChange={e => setMajor(e.target.value)} placeholder="e.g. Computer Science" />
+                      <input type="text" value={major} onChange={e => setMajor(e.target.value)} style={{ color: '#000', fontWeight: '500' }} />
                     </div>
                     <div className="student-profile__field">
                       <label>Year of Graduation</label>
@@ -286,16 +318,45 @@ const StudentProfileSetup = () => {
                     <h2>Interests & Expertise</h2>
                     <p>Select topics that resonate with your career path.</p>
                   </div>
-                  <div className="student-profile__interests" style={{ marginTop: '1.5rem' }}>
-                    {interestsList.map(interest => (
-                      <button
-                        key={interest} type="button"
-                        className={`student-profile__interest-tag ${activeInterests.includes(interest) ? 'student-profile__interest-tag--active' : 'student-profile__interest-tag--default'}`}
-                        onClick={() => toggleInterest(interest)}
+                  <div className="student-profile__interests" style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+                      {interestsList.map(interest => (
+                        <button
+                          key={interest} type="button"
+                          className={`student-profile__interest-tag ${activeInterests.includes(interest) ? 'student-profile__interest-tag--active' : 'student-profile__interest-tag--default'}`}
+                          onClick={() => toggleInterest(interest)}
+                        >
+                          {interest}
+                        </button>
+                      ))}
+                      {/* Render any active custom interests not in the default list */}
+                      {activeInterests.filter(i => !interestsList.includes(i)).map(interest => (
+                        <button
+                          key={interest} type="button"
+                          className="student-profile__interest-tag student-profile__interest-tag--active"
+                          onClick={() => toggleInterest(interest)}
+                        >
+                          {interest}
+                        </button>
+                      ))}
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.5rem', width: '100%', maxWidth: '300px' }}>
+                      <input 
+                        type="text" 
+                        value={customInterest} 
+                        onChange={e => setCustomInterest(e.target.value)} 
+                        onKeyDown={handleAddCustomInterest}
+                        placeholder="Add custom interest..." 
+                        style={{ flex: 1, padding: '0.5rem 1rem', borderRadius: '999px', border: '1px solid var(--outline)', background: 'var(--surface)', color: '#000', outline: 'none', fontSize: '0.875rem' }}
+                      />
+                      <button 
+                        type="button" 
+                        onClick={addCustom}
+                        style={{ padding: '0.5rem 1.25rem', borderRadius: '999px', background: 'var(--primary)', color: 'white', border: 'none', cursor: 'pointer', fontSize: '0.875rem', fontWeight: 600 }}
                       >
-                        {interest}
+                        Add
                       </button>
-                    ))}
+                    </div>
                   </div>
                 </div>
 

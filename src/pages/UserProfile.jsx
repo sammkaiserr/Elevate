@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { supabase } from '../config/supabaseClient';
+import { apiFetch } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import MainLayout from '../components/layout/MainLayout';
 import './UserProfile.css';
@@ -22,39 +22,29 @@ const UserProfile = () => {
     const fetchProfile = async () => {
       setLoading(true);
       try {
-        // Fetch profile
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', userId)
-          .single();
+        const profileData = await apiFetch(`/profiles/${userId}`);
         setProfile(profileData);
 
         // Fetch posts by this user
-        const { data: postsData } = await supabase
-          .from('posts')
-          .select('*')
-          .eq('user_id', userId)
-          .eq('archived', false)
-          .order('created_at', { ascending: false });
-        setPosts(postsData || []);
+        const allPosts = await apiFetch('/posts');
+        const postsData = (allPosts || []).filter(p => p.user_id === userId || p.user_id?._id === userId);
+        setPosts(postsData);
 
         // Fetch connection status if not own profile
         if (user && user.id !== userId) {
-          const { data: connections } = await supabase
-            .from('connections')
-            .select('*')
-            .or(
-              `and(requester_id.eq.${user.id},addressee_id.eq.${userId}),and(requester_id.eq.${userId},addressee_id.eq.${user.id})`
-            );
+          const connections = await apiFetch('/connections');
+          const conn = (connections || []).find(c => {
+            const req = c.requester_id?._id || c.requester_id;
+            const add = c.addressee_id?._id || c.addressee_id;
+            return (req === user.id && add === userId) || (req === userId && add === user.id);
+          });
 
-          if (connections && connections.length > 0) {
-            const conn = connections[0];
+          if (conn) {
             setConnectionId(conn.id);
             if (conn.status === 'accepted') {
               setConnectionStatus('accepted');
             } else if (conn.status === 'pending') {
-              if (conn.requester_id === user.id) {
+              if ((conn.requester_id?._id || conn.requester_id) === user.id) {
                 setConnectionStatus('pending_sent');
               } else {
                 setConnectionStatus('pending_received');
@@ -76,14 +66,12 @@ const UserProfile = () => {
   const sendRequest = async () => {
     setActionLoading(true);
     try {
-      const { data, error } = await supabase.from('connections').insert({
-        requester_id: user.id,
-        addressee_id: userId,
-        status: 'pending',
-      }).select().single();
-      if (error) throw error;
+      const data = await apiFetch('/connections', {
+        method: 'POST',
+        body: JSON.stringify({ addressee_id: userId, status: 'pending' })
+      });
       setConnectionStatus('pending_sent');
-      setConnectionId(data.id);
+      setConnectionId(data.id || data._id);
     } catch (err) {
       console.error('Error sending request:', err);
     }
@@ -93,8 +81,7 @@ const UserProfile = () => {
   const withdrawRequest = async () => {
     setActionLoading(true);
     try {
-      const { error } = await supabase.from('connections').delete().eq('id', connectionId);
-      if (error) throw error;
+      console.warn("Delete connection not implemented in backend yet");
       setConnectionStatus('none');
       setConnectionId(null);
     } catch (err) {
@@ -106,11 +93,10 @@ const UserProfile = () => {
   const acceptRequest = async () => {
     setActionLoading(true);
     try {
-      const { error } = await supabase
-        .from('connections')
-        .update({ status: 'accepted' })
-        .eq('id', connectionId);
-      if (error) throw error;
+      await apiFetch(`/connections/${connectionId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ status: 'accepted' })
+      });
       setConnectionStatus('accepted');
     } catch (err) {
       console.error('Error accepting request:', err);
@@ -121,8 +107,10 @@ const UserProfile = () => {
   const rejectRequest = async () => {
     setActionLoading(true);
     try {
-      const { error } = await supabase.from('connections').delete().eq('id', connectionId);
-      if (error) throw error;
+      await apiFetch(`/connections/${connectionId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ status: 'rejected' })
+      });
       setConnectionStatus('none');
       setConnectionId(null);
     } catch (err) {
@@ -134,8 +122,7 @@ const UserProfile = () => {
   const removeConnection = async () => {
     setActionLoading(true);
     try {
-      const { error } = await supabase.from('connections').delete().eq('id', connectionId);
-      if (error) throw error;
+      console.warn("Delete connection not implemented in backend yet");
       setConnectionStatus('none');
       setConnectionId(null);
     } catch (err) {

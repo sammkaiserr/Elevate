@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import MainLayout from '../components/layout/MainLayout';
-import { supabase } from '../config/supabaseClient';
+import { apiFetch } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import './Home.css';
 
@@ -17,13 +17,12 @@ const Home = () => {
   }, []);
 
   const fetchPosts = async () => {
-    const { data, error } = await supabase
-      .from('posts')
-      .select('*, profiles(full_name, avatar_url, job_title)')
-      .eq('archived', false)
-      .order('created_at', { ascending: false });
-
-    if (!error && data) setPosts(data);
+    try {
+      const data = await apiFetch('/posts');
+      if (data) setPosts(data);
+    } catch (err) {
+      console.error('Error fetching posts:', err);
+    }
     setLoading(false);
   };
 
@@ -53,7 +52,14 @@ const Home = () => {
     setPosts((prev) => prev.map((p) =>
       p.id === post.id ? { ...p, upvotes: newUpvotes, downvotes: newDownvotes } : p
     ));
-    await supabase.from('posts').update({ upvotes: newUpvotes, downvotes: newDownvotes }).eq('id', post.id);
+    try {
+      await apiFetch(`/posts/${post.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ upvotes: newUpvotes, downvotes: newDownvotes })
+      });
+    } catch (err) {
+      console.error('Error upvoting:', err);
+    }
   };
 
   const handleDownvote = async (post) => {
@@ -75,7 +81,14 @@ const Home = () => {
     setPosts((prev) => prev.map((p) =>
       p.id === post.id ? { ...p, upvotes: newUpvotes, downvotes: newDownvotes } : p
     ));
-    await supabase.from('posts').update({ upvotes: newUpvotes, downvotes: newDownvotes }).eq('id', post.id);
+    try {
+      await apiFetch(`/posts/${post.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ upvotes: newUpvotes, downvotes: newDownvotes })
+      });
+    } catch (err) {
+      console.error('Error downvoting:', err);
+    }
   };
 
   const handleShare = (post) => {

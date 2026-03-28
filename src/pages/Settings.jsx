@@ -1,17 +1,22 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useUser, useClerk } from '@clerk/react';
 import MainLayout from '../components/layout/MainLayout';
 import { useAuth } from '../context/AuthContext';
 import './Settings.css';
 
 const Settings = () => {
-  const { user, profile, signOut } = useAuth();
+  const { user: clerkUser } = useUser();
+  const { signOut } = useClerk();
+  const { profile } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     await signOut();
     navigate('/');
   };
+
+  const email = clerkUser?.emailAddresses?.[0]?.emailAddress || profile?.email || 'Loading...';
 
   return (
     <MainLayout>
@@ -24,12 +29,12 @@ const Settings = () => {
         <main className="settings-content">
           <section className="settings-section">
             <h2 className="settings-section__title">Account</h2>
-            
+
             <div className="settings-card">
               <div className="settings-card__row">
                 <div className="settings-card__info">
                   <h3>Email Address</h3>
-                  <p>{user?.email || 'Loading...'}</p>
+                  <p>{email}</p>
                 </div>
               </div>
 

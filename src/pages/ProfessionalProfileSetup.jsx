@@ -79,11 +79,11 @@ const ProfessionalProfileSetup = () => {
               <div className="pro-profile__grid pro-profile__grid--2">
                 <div className="pro-profile__field">
                   <label>Full Name</label>
-                  <input type="text" placeholder="e.g. Alexander Sterling" />
+                  <input type="text" style={{ color: '#000', fontWeight: '500' }} />
                 </div>
                 <div className="pro-profile__field">
                   <label>Current Job Role</label>
-                  <input type="text" placeholder="e.g. Principal Product Architect" />
+                  <input type="text" style={{ color: '#000', fontWeight: '500' }} />
                 </div>
               </div>
             </div>
@@ -107,11 +107,11 @@ const ProfessionalProfileSetup = () => {
                 </div>
                 <div className="pro-profile__field">
                   <label>Graduation Year</label>
-                  <input type="number" placeholder="YYYY" />
+                  <input type="number" style={{ color: '#000', fontWeight: '500' }} />
                 </div>
                 <div className="pro-profile__field">
                   <label>Current Company</label>
-                  <input type="text" placeholder="e.g. Meta, Stripe, or Stealth" />
+                  <input type="text" style={{ color: '#000', fontWeight: '500' }} />
                 </div>
               </div>
             </div>
@@ -127,7 +127,7 @@ const ProfessionalProfileSetup = () => {
                   <label>City / Base Location</label>
                   <div className="field-icon">
                     <span className="material-symbols-outlined">location_on</span>
-                    <input type="text" placeholder="San Francisco, CA" />
+                    <input type="text" style={{ color: '#000', fontWeight: '500' }} />
                   </div>
                 </div>
                 <div className="pro-profile__field">

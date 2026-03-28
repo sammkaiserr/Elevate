@@ -1,134 +1,15 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { supabase } from '../config/supabaseClient';
+import React from 'react';
+import { SignIn as ClerkSignIn, useAuth } from '@clerk/react';
+import { Navigate } from 'react-router-dom';
 import './SignIn.css';
 
 const SignIn = () => {
-  // 'sign-in' | 'sign-up' | 'forgot-password' | 'verify-otp'
-  const [view, setView] = useState('sign-in');
-  
-  // Form fields
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [otpCode, setOtpCode] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  
-  // Status
-  const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(false);
-  
-  const { signIn, signUp, resetPassword, verifyOtp, updatePassword, resumeAuthListener } = useAuth();
-  const navigate = useNavigate();
+  const { isSignedIn, isLoaded } = useAuth();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setMessage('');
-    setLoading(true);
-
-    try {
-      if (view === 'sign-up') {
-        if (!fullName.trim()) {
-          setError('Please enter your full name.');
-          setLoading(false);
-          return;
-        }
-        const { data: signUpData, error: signUpError } = await signUp(email, password, fullName);
-        if (signUpError) throw signUpError;
-        
-        // Check if email confirmation is required
-        const isConfirmed = signUpData?.session != null;
-        if (isConfirmed) {
-          navigate('/role-selection');
-        } else {
-          navigate('/role-selection');
-        }
-        setTimeout(() => resumeAuthListener(), 500);
-      } 
-      else if (view === 'sign-in') {
-        console.log('[SignIn] Attempting sign-in...');
-        
-        // Use Promise.race to enforce a timeout, in case the user's network drops packets to Supabase
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 12000);
-        
-        try {
-          const { data, error: signInError } = await Promise.race([
-            supabase.auth.signInWithPassword({ email, password }),
-            new Promise((_, reject) => 
-              setTimeout(() => reject(new Error('Network timeout: Could not connect to authentication server. Please check your internet connection or adblocker.')), 12000)
-            )
-          ]);
-          
-          clearTimeout(timeoutId);
-          console.log('[SignIn] Response received:', { data: !!data, error: signInError });
-          
-          if (signInError) throw signInError;
-          if (!data?.session) throw new Error('No session returned. Please try again.');
-          navigate('/home');
-        } catch (err) {
-          clearTimeout(timeoutId);
-          throw err;
-        }
-      }
-      else if (view === 'forgot-password') {
-        const { error: resetError } = await resetPassword(email);
-        if (resetError) throw resetError;
-        setMessage('A reset code has been sent to your email.');
-        setView('verify-otp');
-      }
-      else if (view === 'verify-otp') {
-        if (newPassword.length < 6) {
-          setError('Password must be at least 6 characters.');
-          setLoading(false);
-          return;
-        }
-        
-        const { error: otpError } = await verifyOtp(email, otpCode);
-        if (otpError) throw otpError;
-        
-        const { error: updateError } = await updatePassword(newPassword);
-        if (updateError) throw updateError;
-        
-        navigate('/home');
-      }
-    } catch (err) {
-      setError(err.message || 'An unexpected error occurred.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getTitle = () => {
-    switch (view) {
-      case 'sign-up': return 'Create your account';
-      case 'forgot-password': return 'Reset password';
-      case 'verify-otp': return 'Enter reset code';
-      default: return 'Welcome back';
-    }
-  };
-
-  const getSubtitle = () => {
-    switch (view) {
-      case 'sign-up': return 'Enter your details to get started.';
-      case 'forgot-password': return 'Enter your email to receive a reset code.';
-      case 'verify-otp': return `We sent a code to ${email}.`;
-      default: return 'Please enter your details to sign in.';
-    }
-  };
-
-  const getButtonText = () => {
-    if (loading) return 'Please wait...';
-    switch (view) {
-      case 'sign-up': return 'Create Account';
-      case 'forgot-password': return 'Send Reset Code';
-      case 'verify-otp': return 'Update Password';
-      default: return 'Sign In to Account';
-    }
-  };
+  // Redirect already-signed-in users straight to the app
+  if (isLoaded && isSignedIn) {
+    return <Navigate to="/home" replace />;
+  }
 
   return (
     <div className="signin">
@@ -138,95 +19,13 @@ const SignIn = () => {
           <p>The Curated Professional Network</p>
         </div>
 
-        <div className="signin__card">
-          <div className="signin__card-accent"></div>
-          <div className="signin__card-body">
-            <div className="signin__welcome">
-              <h2>{getTitle()}</h2>
-              <p>{getSubtitle()}</p>
-            </div>
-
-            {error && (
-              <div className="signin__error">
-                <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>error</span>
-                {error}
-              </div>
-            )}
-            
-            {message && (
-              <div className="signin__message" style={{ background: '#ecfdf5', color: '#065f46', padding: '0.75rem 1rem', borderRadius: '0.5rem', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', border: '1px solid #a7f3d0' }}>
-                <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>check_circle</span>
-                {message}
-              </div>
-            )}
-
-            <form className="signin__form" onSubmit={handleSubmit}>
-              {/* Sign Up Fields */}
-              {view === 'sign-up' && (
-                <div className="signin__field">
-                  <label className="signin__label" htmlFor="fullName">Full Name</label>
-                  <input className="signin__input" id="fullName" type="text" placeholder="John Doe" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
-                </div>
-              )}
-
-              {/* Email Field (Used in sign-in, sign-up, forgot-password) */}
-              {(view === 'sign-in' || view === 'sign-up' || view === 'forgot-password') && (
-                <div className="signin__field">
-                  <label className="signin__label" htmlFor="email">Email Address</label>
-                  <input className="signin__input" id="email" type="email" placeholder="name@company.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                </div>
-              )}
-
-              {/* Password Field (Used in sign-in, sign-up) */}
-              {(view === 'sign-in' || view === 'sign-up') && (
-                <div className="signin__field">
-                  <div className="signin__field-header">
-                    <label className="signin__label" htmlFor="password">Password</label>
-                    {view === 'sign-in' && (
-                      <button type="button" onClick={() => { setView('forgot-password'); setError(''); setMessage(''); }} className="signin__forgot" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-                        Forgot Password?
-                      </button>
-                    )}
-                  </div>
-                  <input className="signin__input" id="password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
-                </div>
-              )}
-
-              {/* OTP Code and New Password Fields */}
-              {view === 'verify-otp' && (
-                <>
-                  <div className="signin__field">
-                    <label className="signin__label" htmlFor="otpCode">6-Digit Reset Code</label>
-                    <input className="signin__input" id="otpCode" type="text" placeholder="123456" value={otpCode} onChange={(e) => setOtpCode(e.target.value)} required />
-                  </div>
-                  <div className="signin__field">
-                    <label className="signin__label" htmlFor="newPassword">New Password</label>
-                    <input className="signin__input" id="newPassword" type="password" placeholder="••••••••" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required minLength={6} />
-                  </div>
-                </>
-              )}
-
-              <button type="submit" className="btn-gradient signin__submit" disabled={loading}>
-                {getButtonText()}
-              </button>
-              
-              {(view === 'forgot-password' || view === 'verify-otp') && (
-                 <button type="button" onClick={() => { setView('sign-in'); setError(''); setMessage(''); }} className="signin__toggle" style={{ width: '100%', marginTop: '1rem' }}>
-                   Back to Sign In
-                 </button>
-              )}
-            </form>
-          </div>
+        <div className="signin__clerk-container">
+          <ClerkSignIn
+            routing="hash"
+            fallbackRedirectUrl="/home"
+            signUpFallbackRedirectUrl="/role-selection"
+          />
         </div>
-
-        {(view === 'sign-in' || view === 'sign-up') && (
-          <p className="signin__footer">
-            {view === 'sign-up' ? 'Already have an account?' : "Don't have an account?"}
-            <button onClick={() => { setView(view === 'sign-in' ? 'sign-up' : 'sign-in'); setError(''); setMessage(''); }} className="signin__toggle">
-              {view === 'sign-up' ? 'Sign In' : 'Sign Up'}
-            </button>
-          </p>
-        )}
       </main>
 
       {/* Decorative orbs */}

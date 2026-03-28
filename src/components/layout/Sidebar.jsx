@@ -9,6 +9,7 @@ const Sidebar = () => {
   return (
     <aside className="sidebar">
       <div className="sidebar__inner">
+      
         <nav className="sidebar__nav">
           <Link to="/home" className={`sidebar__link ${path === '/home' ? 'active' : ''}`}>
             <span className="material-symbols-outlined">dynamic_feed</span>

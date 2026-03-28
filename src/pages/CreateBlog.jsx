@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { supabase } from '../config/supabaseClient';
+import { apiFetch } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import './CreateBlog.css';
 
@@ -25,17 +25,18 @@ const CreateBlog = () => {
   // Load post data in edit mode
   useEffect(() => {
     if (isEditMode && editId) {
-      supabase.from('posts').select('*').eq('id', editId).single().then(({ data, error }) => {
-        if (!error && data) {
+      // NOTE: Our backend doesn't have GET /:id for posts yet, we could use GET / and filter
+      apiFetch('/posts').then((posts) => {
+        const data = posts.find(p => p.id === editId || p._id === editId);
+        if (data) {
           setTitle(data.title || '');
           setTags(data.tags || []);
           if (data.cover_image_url) setCoverImagePreview(data.cover_image_url);
-          // Set body content after render
           setTimeout(() => {
             if (bodyRef.current) bodyRef.current.innerHTML = data.content || '';
           }, 0);
         }
-      });
+      }).catch(err => console.error('Error fetching post:', err));
     }
   }, [isEditMode, editId]);
 
@@ -83,35 +84,26 @@ const CreateBlog = () => {
     try {
       if (!user?.id) throw new Error('You must be logged in to publish a post.');
 
-      let coverImageUrl = coverImagePreview || '';
-      if (coverImageFile) {
-        const fileExt = coverImageFile.name.split('.').pop();
-        const fileName = `${Math.random()}.${fileExt}`;
-        const filePath = `${user.id}/${fileName}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from('blog-covers')
-          .upload(filePath, coverImageFile);
-        if (uploadError) throw uploadError;
-
-        const { data: publicUrlData } = supabase.storage.from('blog-covers').getPublicUrl(filePath);
-        coverImageUrl = publicUrlData.publicUrl;
-      }
+      let coverImageUrl = coverImagePreview || ''; // We use the base64 preview string directly
 
       const content = bodyRef.current?.innerHTML || '';
 
       if (isEditMode) {
-        const { error } = await supabase.from('posts').update({
-          title: title.trim(), content, tags,
-          cover_image_url: coverImageUrl,
-        }).eq('id', editId);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from('posts').insert({
-          user_id: user.id, title: title.trim(), content, tags,
-          cover_image_url: coverImageUrl,
+        await apiFetch(`/posts/${editId}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            title: title.trim(), content, tags,
+            cover_image_url: coverImageUrl,
+          })
         });
-        if (error) throw error;
+      } else {
+        await apiFetch('/posts', {
+          method: 'POST',
+          body: JSON.stringify({
+            title: title.trim(), content, tags,
+            cover_image_url: coverImageUrl,
+          })
+        });
       }
 
       navigate('/profile/student');
