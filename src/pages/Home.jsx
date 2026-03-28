@@ -93,18 +93,6 @@ const Home = () => {
     }
   };
 
-  const handleDeletePost = async (postId) => {
-    if (!window.confirm("Are you sure you want to delete this post?")) return;
-    try {
-      await apiFetch(`/posts/${postId}`, { method: 'DELETE' });
-      setPosts(prev => prev.filter(p => p.id !== postId));
-      showToast("Post deleted successfully");
-    } catch (err) {
-      console.error('Error deleting post:', err);
-      showToast("Failed to delete post");
-    }
-  };
-
   const handleShare = (post) => {
     const url = `${window.location.origin}/home`;
     navigator.clipboard.writeText(url).then(() => showToast('Link copied to clipboard!')).catch(() => showToast('Could not copy link.'));
@@ -193,15 +181,6 @@ const Home = () => {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         {post.tags?.length > 0 && (
                           <span className="home__post-tag">{post.tags[0]}</span>
-                        )}
-                        {(post.user_id === user?.id || post.user_id?._id === user?.id || post.profiles?.id === user?.id || post.profiles?._id === user?.id) && (
-                          <button 
-                            onClick={() => handleDeletePost(post.id)}
-                            style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '4px', display: 'flex' }}
-                            title="Delete Post"
-                          >
-                            <span className="material-symbols-outlined" style={{ fontSize: '20px', opacity: 0.8 }}>delete</span>
-                          </button>
                         )}
                       </div>
                     </div>
