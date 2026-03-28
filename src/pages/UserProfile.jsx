@@ -142,6 +142,17 @@ const UserProfile = () => {
     setActionLoading(false);
   };
 
+  const handleDeletePost = async (postId) => {
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
+    try {
+      await apiFetch(`/posts/${postId}`, { method: 'DELETE' });
+      setPosts(prev => prev.filter(p => p.id !== postId));
+    } catch (err) {
+      console.error('Error deleting post:', err);
+      alert("Failed to delete post");
+    }
+  };
+
   const getInitials = (name) => {
     if (!name) return '?';
     return name.split(' ').map((w) => w[0]).join('').toUpperCase().slice(0, 2);
@@ -426,8 +437,19 @@ const UserProfile = () => {
               ) : (
                 <div className="space-y-4">
                   {posts.map((post) => (
-                    <div key={post.id} className="p-5 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-zinc-100 hover:dark:bg-zinc-800 transition rounded-xl border border-zinc-200 dark:border-zinc-800">
-                      <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">{post.title}</h3>
+                    <div key={post.id} className="p-5 bg-zinc-50 dark:bg-zinc-800/50 hover:bg-zinc-100 hover:dark:bg-zinc-800 transition rounded-xl border border-zinc-200 dark:border-zinc-800 relative">
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 pr-8">{post.title}</h3>
+                        {(post.user_id === user?.id || post.user_id?._id === user?.id || post.profiles?.id === user?.id || post.profiles?._id === user?.id) && (
+                          <button 
+                            onClick={() => handleDeletePost(post.id)}
+                            className="absolute top-4 right-4 text-red-500 hover:text-red-700 transition p-1"
+                            title="Delete Post"
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>delete</span>
+                          </button>
+                        )}
+                      </div>
                       <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4 leading-relaxed">
                         {post.content?.replace(/<[^>]+>/g, '').substring(0, 150)}{post.content?.length > 150 ? '...' : ''}
                       </p>
