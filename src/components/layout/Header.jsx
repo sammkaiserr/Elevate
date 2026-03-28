@@ -13,6 +13,21 @@ const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => 
   const path = location.pathname;
   const { profile } = useAuth();
 
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem('theme') === 'dark' || 
+      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  });
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDarkMode]);
+
   const initials = profile?.full_name
     ? profile.full_name.charAt(0).toUpperCase()
     : 'U';
@@ -64,6 +79,16 @@ const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => 
           )}
 
           <div className="header__actions">
+            {/* Theme Toggle */}
+            <button
+              className="theme-toggle"
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              aria-label="Toggle Dark Mode"
+            >
+              <span className="material-symbols-outlined theme-toggle-icon sun">light_mode</span>
+              <span className="material-symbols-outlined theme-toggle-icon moon">dark_mode</span>
+            </button>
+
             {/* Notification Bell + Dropdown */}
             <div className="header__notif-wrapper hide-mobile" ref={notifRef}>
               <button

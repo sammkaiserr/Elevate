@@ -147,6 +147,70 @@
 }
 
 /* ============================================
+   THEME TOGGLE (DARK/LIGHT MODE)
+   ============================================ */
+.theme-toggle {
+  position: relative;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--on-surface-variant);
+  transition: all var(--transition-normal);
+  overflow: hidden;
+  margin-right: 0.5rem;
+}
+
+.theme-toggle:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--on-surface);
+}
+
+:root.dark .theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.theme-toggle-icon {
+  position: absolute;
+  transition: all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* Sun (Light Mode) */
+.theme-toggle-icon.sun {
+  transform: translateY(0) rotate(0deg) scale(1);
+  opacity: 1;
+}
+:root.dark .theme-toggle-icon.sun {
+  transform: translateY(100%) rotate(90deg) scale(0);
+  opacity: 0;
+}
+
+/* Moon (Dark Mode) */
+.theme-toggle-icon.moon {
+  transform: translateY(-100%) rotate(-90deg) scale(0);
+  opacity: 0;
+}
+:root.dark .theme-toggle-icon.moon {
+  transform: translateY(0) rotate(0deg) scale(1);
+  opacity: 1;
+}
+
+/* Dark mode specific overrides for Header */
+:root.dark .header {
+  background: rgba(0, 0, 0, 0.8);
+  box-shadow: 0 1px 3px rgba(255, 255, 255, 0.05);
+}
+
+:root.dark .header__brand, :root.dark .header__drawer-brand {
+  background: linear-gradient(135deg, #d6e3ff, #86a0cd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================
    NOTIFICATION DROPDOWN
    ============================================ */
 .header__notif-wrapper {

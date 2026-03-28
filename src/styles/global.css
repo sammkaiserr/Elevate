@@ -92,6 +92,36 @@
 }
 
 /* ============================================
+   DARK MODE
+   ============================================ */
+:root.dark {
+  /* Primary */
+  --primary: #86a0cd;
+  --primary-container: #1a365d;
+  --on-primary: #ffffff;
+  --on-primary-container: #d6e3ff;
+  
+  /* Background / Surface - Solid Black */
+  --surface: #000000;
+  --surface-dim: #0a0a0a;
+  --surface-bright: #141414;
+  --surface-container-lowest: #000000;
+  --surface-container-low: #0a0a0a;
+  --surface-container: #111111;
+  --surface-container-high: #1a1a1a;
+  --surface-container-highest: #222222;
+  --surface-variant: #222222;
+  --on-surface: #ffffff;
+  --on-surface-variant: #c4c6cf;
+  
+  --background: #000000;
+  --on-background: #ffffff;
+  
+  --outline: #74777f;
+  --outline-variant: #43474e;
+}
+
+/* ============================================
    RESET & BASE
    ============================================ */
 *, *::before, *::after {
