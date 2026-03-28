@@ -75,10 +75,8 @@ const StudentProfileSetup = () => {
     if (!user) return;
     setPostsLoading(true);
     try {
-      const allPosts = await apiFetch('/posts');
-      const myPostsData = (allPosts || []).filter(p => !p.archived && (p.user_id === user.id || p.user_id?._id === user.id));
-      myPostsData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      setMyPosts(myPostsData);
+      const myPostsData = await apiFetch('/posts/my');
+      setMyPosts(myPostsData || []);
 
       const archData = await apiFetch('/posts/archived');
       setArchivedPosts(archData || []);
@@ -206,6 +204,7 @@ const StudentProfileSetup = () => {
       showToast('Post deleted.');
     } catch (err) {
       console.error(err);
+      showToast('Failed to delete post: ' + err.message);
     }
     setOpenMenuId(null);
   };

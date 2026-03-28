@@ -43,6 +43,20 @@ router.get('/archived', requireAuth(), async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+router.get('/my', requireAuth(), async (req, res) => {
+  try {
+    const posts = await Post.find({ archived: false, user_id: req.auth.userId })
+      .sort({ created_at: -1 });
+    const formatted = posts.map(p => {
+      const obj = p.toObject();
+      obj.id = obj._id.toString();
+      return obj;
+    });
+    res.json(formatted);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 router.post('/', requireAuth(), async (req, res) => {
   try {
@@ -61,8 +75,9 @@ router.put('/:id', requireAuth(), async (req, res) => {
     const checkPost = await Post.findById(req.params.id);
     if (!checkPost) return res.status(404).json({ error: 'Not found' });
     
-    const uid = checkPost.user_id._id ? checkPost.user_id._id.toString() : checkPost.user_id.toString();
+    const uid = checkPost.user_id ? checkPost.user_id.toString() : '';
     if (uid !== req.auth.userId) {
+      console.error(`Auth mismatch: post uid=${uid}, req userId=${req.auth.userId}`);
       return res.status(403).json({ error: 'Unauthorized to update this post' });
     }
 
@@ -80,8 +95,9 @@ router.delete('/:id', requireAuth(), async (req, res) => {
     const checkPost = await Post.findById(req.params.id);
     if (!checkPost) return res.status(404).json({ error: 'Not found' });
     
-    const uid = checkPost.user_id._id ? checkPost.user_id._id.toString() : checkPost.user_id.toString();
+    const uid = checkPost.user_id ? checkPost.user_id.toString() : '';
     if (uid !== req.auth.userId) {
+      console.error(`Auth mismatch: post uid=${uid}, req userId=${req.auth.userId}`);
       return res.status(403).json({ error: 'Unauthorized to delete this post' });
     }
 
