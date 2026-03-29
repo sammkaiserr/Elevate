@@ -173,6 +173,14 @@ const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => 
                 <span>Messages</span>
               </Link>
               <Link
+                to="/resume"
+                className={`header__drawer-link ${path === '/resume' ? 'active' : ''}`}
+                onClick={() => setShowDrawer(false)}
+              >
+                <span className="material-symbols-outlined">document_scanner</span>
+                <span>Resume AI</span>
+              </Link>
+              <Link
                 to="/settings"
                 className={`header__drawer-link ${path === '/settings' ? 'active' : ''}`}
                 onClick={() => setShowDrawer(false)}

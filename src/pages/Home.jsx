@@ -118,26 +118,6 @@ const Home = () => {
           </div>
         )}
 
-        {/* Composer */}
-        <div className="home__composer">
-          <div className="home__composer-avatar">
-            {profile?.avatar_url
-              ? <img src={profile.avatar_url} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
-              : initials
-            }
-          </div>
-          <Link to="/create" className="home__composer-input">
-            Share a professional update or insight...
-          </Link>
-          <div className="home__composer-actions">
-            <Link to="/create" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--text-secondary)', fontSize: '0.875rem', textDecoration: 'none' }}>
-              <span className="material-symbols-outlined">image</span>
-            </Link>
-            <Link to="/create" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--text-secondary)', fontSize: '0.875rem', textDecoration: 'none' }}>
-              <span className="material-symbols-outlined">article</span>
-            </Link>
-          </div>
-        </div>
 
         {/* Posts */}
         <div className="home__posts">
