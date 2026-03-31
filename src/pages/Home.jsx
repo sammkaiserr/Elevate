@@ -21,7 +21,11 @@ const Home = () => {
   const fetchPosts = async () => {
     try {
       const data = await apiFetch('/posts');
-      if (data) setPosts(data);
+      if (data) {
+        // Handle case where API might return { posts: [...] } instead of direct array
+        const postsArray = Array.isArray(data) ? data : (data.posts || []);
+        setPosts(postsArray);
+      }
     } catch (err) {
       console.error('Error fetching posts:', err);
     }
@@ -147,14 +151,16 @@ const Home = () => {
                   <div className="home__post-body">
                     <div className="home__post-header">
                       <div className="home__post-author">
-                        <div className="home__post-avatar">
+                        <Link to={`/profile/user/${post.user_id}`} className="home__post-avatar">
                           {post.profiles?.avatar_url
                             ? <img src={post.profiles.avatar_url} alt={authorName} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
                             : authorInitials
                           }
-                        </div>
+                        </Link>
                         <div>
-                          <h3 className="home__post-name">{authorName}</h3>
+                          <Link to={`/profile/user/${post.user_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <h3 className="home__post-name hover:underline cursor-pointer">{authorName}</h3>
+                          </Link>
                           <p className="home__post-meta">{post.profiles?.job_title || ''} • {timeAgo}</p>
                         </div>
                       </div>

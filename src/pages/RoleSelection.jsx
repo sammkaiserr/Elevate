@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './RoleSelection.css';
 
 const RoleSelection = () => {
   const [selectedRole, setSelectedRole] = useState(null);
+  const navigate = useNavigate();
+
+  const handleNext = () => {
+    if (!selectedRole) return;
+    navigate(selectedRole === 'professional' ? '/profile/professional' : '/profile/student');
+  };
 
   return (
     <div className="role-selection">
@@ -67,12 +73,19 @@ const RoleSelection = () => {
 
           {/* Footer */}
           <div className="role-selection__footer">
-            <Link to={selectedRole === 'professional' ? '/profile/professional' : '/profile/student'}>
-              <button className="btn-gradient role-selection__next-btn">
-                Next
-                <span className="material-symbols-outlined">chevron_right</span>
-              </button>
-            </Link>
+            <button 
+              className="btn-gradient role-selection__next-btn" 
+              onClick={handleNext}
+              disabled={!selectedRole}
+              style={{ 
+                opacity: selectedRole ? 1 : 0.5, 
+                cursor: selectedRole ? 'pointer' : 'not-allowed',
+                filter: selectedRole ? 'none' : 'grayscale(100%)'
+              }}
+            >
+              Next
+              <span className="material-symbols-outlined">chevron_right</span>
+            </button>
             <div className="role-selection__login-link">
               <span>Already have an account?</span>
               <Link to="/">Log in</Link>

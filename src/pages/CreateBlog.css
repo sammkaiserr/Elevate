@@ -20,7 +20,7 @@
 }
 
 :root.dark .create-blog__header {
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(18, 21, 26, 0.92);
 }
 
 .create-blog__header-inner {
@@ -135,7 +135,7 @@
   gap: 0.25rem;
   padding: 0.375rem 0.75rem;
   background: rgba(37, 99, 235, 0.06);
-  color: #1e3a5f;
+  color: var(--primary);
   border: 1px solid rgba(37, 99, 235, 0.1);
   border-radius: var(--radius-full);
   font-size: 0.75rem;
@@ -285,7 +285,7 @@
 }
 
 :root.dark .create-blog__toolbar {
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(22, 27, 35, 0.95);
 }
 
 @media (min-width: 640px) {
@@ -321,7 +321,7 @@
 }
 
 .create-blog__toolbar-btn--ai {
-  color: #1d4ed8;
+  color: var(--primary);
   background: rgba(37, 99, 235, 0.06);
   margin-left: 0.5rem;
 }
@@ -410,6 +410,6 @@
 }
 
 .create-blog__mobile-toolbar button:last-child {
-  color: #1d4ed8;
+  color: var(--primary);
   background: rgba(37, 99, 235, 0.06);
 }

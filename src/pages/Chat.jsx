@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '@clerk/react';
 import { io } from 'socket.io-client';
 import Header from '../components/layout/Header';
@@ -11,12 +12,20 @@ var socket, selectedChatCompare;
 
 const Chat = () => {
   const { getToken, userId } = useAuth();
+  const location = useLocation();
 
   const [conversations, setConversations] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (location.state?.selectedChat) {
+      setSelectedChat(location.state.selectedChat);
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   // Initialize socket
   useEffect(() => {

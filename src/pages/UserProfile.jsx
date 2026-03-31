@@ -24,9 +24,8 @@ const UserProfile = () => {
         const profileData = await apiFetch(`/profiles/${userId}`);
         setProfile(profileData);
 
-        const allPosts = await apiFetch('/posts');
-        const postsData = (allPosts || []).filter(p => p.user_id === userId || p.user_id?._id === userId);
-        setPosts(postsData);
+        const postsData = await apiFetch(`/posts/user/${userId}`);
+        setPosts(postsData || []);
 
         if (user && user.id !== userId) {
           const connections = await apiFetch('/connections');

@@ -59,10 +59,18 @@ const Network = () => {
       setPendingSent(sentPending);
       setPendingReceived(receivedPending);
 
-      // We need a /profiles endpoint in backend to fetch all, or we can just skip suggestions for MVP
-      // Let's assume we don't have a bulk fetch all profiles in the backend yet.
-      // We will leave suggestions empty for now to avoid building out complex APIs while migrating.
-      setSuggestions([]);
+      // Fetch all profiles for suggestions
+      try {
+        const allProfiles = await apiFetch('/profiles');
+        const suggestionsList = (allProfiles || []).filter(p => {
+          const pid = p._id || p.id;
+          return pid !== user.id && !connectedUserIds.has(pid);
+        });
+        setSuggestions(suggestionsList);
+      } catch (err) {
+        console.error('Error fetching suggestions:', err);
+        setSuggestions([]);
+      }
     } catch (err) {
       console.error('Error fetching network data:', err);
     }

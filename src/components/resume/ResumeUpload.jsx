@@ -28,7 +28,7 @@ export default function ResumeUpload({ onUpload }) {
       <div
         {...getRootProps()}
         className={`
-          relative overflow-hidden border-2 border-dashed rounded-2xl p-16 text-center cursor-pointer
+          relative overflow-hidden border-2 border-dashed rounded-2xl p-8 md:p-16 text-center cursor-pointer
           transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group
           ${
             isDragActive && !isDragReject

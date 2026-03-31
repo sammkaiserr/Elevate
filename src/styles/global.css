@@ -99,29 +99,58 @@
    ============================================ */
 :root.dark {
   /* Primary */
-  --primary: #86a0cd;
-  --primary-container: #1a365d;
-  --on-primary: #ffffff;
+  --primary: #adc7f7;
+  --primary-container: #1e3a5f;
+  --on-primary: #001b3c;
   --on-primary-container: #d6e3ff;
-  
-  /* Background / Surface - Solid Black */
-  --surface: #000000;
-  --surface-dim: #0a0a0a;
-  --surface-bright: #141414;
-  --surface-container-lowest: #000000;
-  --surface-container-low: #0a0a0a;
-  --surface-container: #111111;
-  --surface-container-high: #1a1a1a;
-  --surface-container-highest: #222222;
-  --surface-variant: #222222;
-  --on-surface: #ffffff;
-  --on-surface-variant: #c4c6cf;
-  
-  --background: #000000;
-  --on-background: #ffffff;
-  
-  --outline: #74777f;
-  --outline-variant: #43474e;
+
+  /* Secondary */
+  --secondary: #bcc7dd;
+  --secondary-container: #2a3447;
+  --on-secondary: #253349;
+  --on-secondary-container: #d8e3fa;
+
+  /* Tertiary */
+  --tertiary: #9fcaff;
+  --tertiary-container: #00497e;
+  --on-tertiary: #001d37;
+  --on-tertiary-container: #d2e4ff;
+
+  /* Background / Surface — Soft Dark (not pure black) */
+  --surface: #12151a;
+  --surface-dim: #0d1017;
+  --surface-bright: #1e2229;
+  --surface-container-lowest: #0d1017;
+  --surface-container-low: #161b23;
+  --surface-container: #1c2128;
+  --surface-container-high: #22272e;
+  --surface-container-highest: #2d333b;
+  --surface-variant: #2d333b;
+  --surface-tint: #adc7f7;
+  --on-surface: #e8edf3;
+  --on-surface-variant: #9ba4b0;
+  --inverse-surface: #e3e8ee;
+  --inverse-on-surface: #2d333b;
+
+  /* Background */
+  --background: #12151a;
+  --on-background: #e8edf3;
+
+  /* Error */
+  --error: #ffb4ab;
+  --error-container: #93000a;
+  --on-error: #690005;
+  --on-error-container: #ffdad6;
+
+  /* Outline */
+  --outline: #6b7280;
+  --outline-variant: #374151;
+
+  /* Shadows — subtler in dark mode */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
 }
 
 /* ============================================

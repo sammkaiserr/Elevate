@@ -111,3 +111,54 @@
   font-size: 0.875rem;
   color: var(--on-surface-variant);
 }
+
+/* ============================================
+   DARK MODE TOGGLE SWITCH
+   ============================================ */
+.settings-toggle {
+  position: relative;
+  width: 3.5rem;
+  height: 2rem;
+  background: var(--surface-container-high);
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition-normal);
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.settings-toggle--on {
+  background: var(--primary);
+}
+
+.settings-toggle__knob {
+  position: absolute;
+  top: 0.2rem;
+  left: 0.2rem;
+  width: 1.6rem;
+  height: 1.6rem;
+  background: var(--surface-container-lowest);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-normal),
+              background var(--transition-normal);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+.settings-toggle--on .settings-toggle__knob {
+  transform: translateX(1.5rem);
+  background: var(--on-primary);
+}
+
+.settings-toggle__knob .material-symbols-outlined {
+  font-size: 0.875rem;
+  color: var(--on-surface-variant);
+  font-variation-settings: 'FILL' 1;
+}
+
+.settings-toggle--on .settings-toggle__knob .material-symbols-outlined {
+  color: var(--primary);
+}

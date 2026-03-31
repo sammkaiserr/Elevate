@@ -8,7 +8,7 @@ export default function ResumeAnalyzer() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [history, setHistory] = useState([]);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth >= 1024);
 
   // VITE_API_URL handles absolute paths both locally and in prod
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
@@ -55,6 +55,7 @@ export default function ResumeAnalyzer() {
   const handleHistoryClick = (item) => {
     setAnalysis(item.analysis);
     setError(null);
+    if (window.innerWidth < 1024) setSidebarOpen(false);
   };
 
   const handleNewAnalysis = () => {
@@ -75,7 +76,7 @@ export default function ResumeAnalyzer() {
 
       {/* Main Content */}
       <main
-        className={`flex-1 overflow-y-auto transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${sidebarOpen ? "ml-[280px]" : "ml-0"}`}
+        className={`flex-1 overflow-y-auto transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${sidebarOpen ? "lg:ml-[280px]" : "ml-0"}`}
       >
         {/* Toggle button when sidebar is closed */}
         {!sidebarOpen && (
@@ -89,7 +90,7 @@ export default function ResumeAnalyzer() {
           </button>
         )}
 
-        <div className="max-w-4xl mx-auto px-6 py-10">
+        <div className="max-w-4xl mx-auto px-3 py-6 md:px-6 md:py-10">
           {/* Hero / Header */}
           {!analysis && !loading && (
             <div className="text-center mb-14 animate-fade-in">

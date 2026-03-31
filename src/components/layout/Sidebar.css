@@ -22,7 +22,7 @@
 }
 
 .sidebar__section-title {
-  color: #1e3a5f;
+  color: var(--primary);
   font-family: var(--font-headline);
   font-size: 0.75rem;
   font-weight: 600;
@@ -55,13 +55,13 @@
   font-family: var(--font-headline);
   font-size: 0.875rem;
   font-weight: 500;
-  color: #475569;
+  color: var(--on-surface-variant);
   transition: all var(--transition-normal);
 }
 
 .sidebar__link:hover {
-  background: rgba(37, 99, 235, 0.04);
-  color: #1e40af;
+  background: var(--surface-container);
+  color: var(--primary);
 }
 
 .sidebar__link.active {

@@ -106,7 +106,7 @@ const CreateBlog = () => {
         });
       }
 
-      navigate('/profile/student');
+      navigate('/home');
     } catch (err) {
       console.error('Publish error:', err);
       setErrorMsg(err.message || 'Unknown error occurred while publishing.');

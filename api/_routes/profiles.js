@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
       : {};
     
     // Auth might not be strictly necessary, but helpful if we want to exclude current user
-    const users = await Profile.find(keyword).limit(10);
+    const users = await Profile.find(keyword).limit(1000);
     res.json(users);
   } catch (err) {
     res.status(500).json({ error: err.message });

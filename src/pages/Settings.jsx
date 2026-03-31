@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser, useClerk } from '@clerk/react';
 import MainLayout from '../components/layout/MainLayout';
@@ -11,9 +11,26 @@ const Settings = () => {
   const { profile } = useAuth();
   const navigate = useNavigate();
 
+  const [isDark, setIsDark] = useState(() => {
+    return document.documentElement.classList.contains('dark');
+  });
+
   const handleLogout = async () => {
     await signOut();
     navigate('/');
+  };
+
+  const toggleDarkMode = () => {
+    const root = document.documentElement;
+    if (isDark) {
+      root.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+      setIsDark(false);
+    } else {
+      root.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+      setIsDark(true);
+    }
   };
 
   const email = clerkUser?.emailAddresses?.[0]?.emailAddress || profile?.email || 'Loading...';
@@ -27,6 +44,32 @@ const Settings = () => {
         </header>
 
         <main className="settings-content">
+          <section className="settings-section">
+            <h2 className="settings-section__title">Appearance</h2>
+
+            <div className="settings-card">
+              <div className="settings-card__row">
+                <div className="settings-card__info">
+                  <h3>Dark Mode</h3>
+                  <p>Switch between light and dark interface themes.</p>
+                </div>
+                <button
+                  className={`settings-toggle ${isDark ? 'settings-toggle--on' : ''}`}
+                  onClick={toggleDarkMode}
+                  aria-label="Toggle dark mode"
+                  role="switch"
+                  aria-checked={isDark}
+                >
+                  <span className="settings-toggle__knob">
+                    <span className="material-symbols-outlined">
+                      {isDark ? 'dark_mode' : 'light_mode'}
+                    </span>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </section>
+
           <section className="settings-section">
             <h2 className="settings-section__title">Account</h2>
 
@@ -64,3 +107,4 @@ const Settings = () => {
 };
 
 export default Settings;
+

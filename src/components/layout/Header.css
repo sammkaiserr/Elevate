@@ -3,7 +3,7 @@
   top: 0;
   width: 100%;
   z-index: 50;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 1px 3px rgba(26, 54, 93, 0.05);
@@ -199,8 +199,8 @@
 
 /* Dark mode specific overrides for Header */
 :root.dark .header {
-  background: rgba(0, 0, 0, 0.8);
-  box-shadow: 0 1px 3px rgba(255, 255, 255, 0.05);
+  background: rgba(18, 21, 26, 0.92);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 :root.dark .header__brand, :root.dark .header__drawer-brand {

@@ -8,18 +8,20 @@ router.get('/', async (req, res) => {
   try {
     const posts = await Post.find({ archived: false })
       .populate('user_id', 'full_name avatar_url job_title')
-      .sort({ created_at: -1 });
+      .sort({ created_at: -1 })
+      .limit(50);
     
     const formatted = posts.map(p => {
       const obj = p.toObject();
       obj.profiles = obj.user_id;
-      obj.user_id = obj.user_id._id;
+      obj.user_id = obj.user_id ? (obj.user_id._id || obj.user_id) : null;
       obj.id = obj._id.toString();
       return obj;
     });
     
     res.json(formatted);
   } catch (err) {
+    console.error('Error fetching feed posts:', err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -33,13 +35,35 @@ router.get('/archived', requireAuth(), async (req, res) => {
     const formatted = posts.map(p => {
       const obj = p.toObject();
       obj.profiles = obj.user_id;
-      obj.user_id = obj.user_id?._id || obj.user_id;
+      obj.user_id = obj.user_id ? (obj.user_id._id || obj.user_id) : null;
       obj.id = obj._id.toString();
       return obj;
     });
     
     res.json(formatted);
   } catch (err) {
+    console.error('Error fetching archived posts:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/user/:userId', async (req, res) => {
+  try {
+    const posts = await Post.find({ archived: false, user_id: req.params.userId })
+      .populate('user_id', 'full_name avatar_url job_title')
+      .sort({ created_at: -1 });
+    
+    const formatted = posts.map(p => {
+      const obj = p.toObject();
+      obj.profiles = obj.user_id;
+      obj.user_id = obj.user_id ? (obj.user_id._id || obj.user_id) : null;
+      obj.id = obj._id.toString();
+      return obj;
+    });
+    
+    res.json(formatted);
+  } catch (err) {
+    console.error('Error fetching user posts:', err);
     res.status(500).json({ error: err.message });
   }
 });

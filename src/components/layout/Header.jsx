@@ -114,13 +114,7 @@ const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => 
                     <button className="header__notif-tab active">All</button>
                   </div>
 
-                  <div className="header__notif-empty">
-                    <div className="header__notif-empty-icon">
-                      <span className="material-symbols-outlined">notifications_none</span>
-                    </div>
-                    <h4>No notifications yet</h4>
-                    <p>When you get notifications, they'll show up here. Start engaging with the community to stay connected.</p>
-                  </div>
+                  <NotificationList />
                 </div>
               )}
             </div>
@@ -193,6 +187,78 @@ const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => 
         </div>
       )}
     </>
+  );
+};
+
+const NotificationList = () => {
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // import apiFetch from api
+    import('../../config/api').then(({ apiFetch }) => {
+      apiFetch('/notifications').then(data => {
+        if (data && Array.isArray(data)) {
+          setNotifications(data);
+        }
+        setLoading(false);
+      }).catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
+    });
+  }, []);
+
+  const markRead = async (id) => {
+    import('../../config/api').then(({ apiFetch }) => {
+      apiFetch(`/notifications/${id}`, { method: 'PUT', body: JSON.stringify({ is_read: true }) })
+        .then(() => {
+          setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
+        });
+    });
+  };
+
+  if (loading) {
+    return <div className="p-4 text-center text-zinc-500">Loading...</div>;
+  }
+
+  if (notifications.length === 0) {
+    return (
+      <div className="header__notif-empty">
+        <div className="header__notif-empty-icon">
+          <span className="material-symbols-outlined">notifications_none</span>
+        </div>
+        <h4>No notifications yet</h4>
+        <p>When you get notifications, they'll show up here. Start engaging with the community to stay connected.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="header__notif-list" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+      {notifications.map(notif => (
+        <div 
+          key={notif.id} 
+          onClick={() => markRead(notif.id)}
+          className={`p-3 border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 cursor-pointer transition ${!notif.is_read ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''}`}
+        >
+          <div className="flex items-start gap-3">
+            <div className={`mt-1 bg-blue-100 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center shrink-0`}>
+              <span className="material-symbols-outlined text-sm">
+                {notif.type === 'connection_request' ? 'person_add' : 'notifications'}
+              </span>
+            </div>
+            <div>
+              <p className="text-sm text-zinc-800 dark:text-zinc-200">{notif.message}</p>
+              <span className="text-xs text-zinc-500 mt-1 block">
+                {new Date(notif.created_at).toLocaleDateString()}
+              </span>
+            </div>
+            {!notif.is_read && <div className="w-2 h-2 bg-blue-600 rounded-full ml-auto mt-2"></div>}
+          </div>
+        </div>
+      ))}
+    </div>
   );
 };
 
