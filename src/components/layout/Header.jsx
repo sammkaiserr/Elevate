@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext'; // profile only — auth state is via Clerk
 import './Header.css';
 
@@ -8,8 +8,16 @@ const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => 
   const showNav = variant === 'chat';
   const [showNotifications, setShowNotifications] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
+  const [searchQuery, setSearchQuery] = useState(() => {
+    // Pre-fill from URL on mount so the box stays synced when navigating back
+    const params = new URLSearchParams(window.location.search);
+    return params.get('q') || '';
+  });
+  const [showSearchResults, setShowSearchResults] = useState(false);
   const notifRef = useRef(null);
+  const searchRef = useRef(null);
   const location = useLocation();
+  const navigate = useNavigate();
   const path = location.pathname;
   const { profile } = useAuth();
 
@@ -43,6 +51,49 @@ const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => 
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Debounced search: navigate to /home?q=... 400 ms after the user stops typing
+  useEffect(() => {
+    const trimmed = searchQuery.trim();
+    if (!trimmed) {
+      // Clear search — go back to normal feed
+      if (location.pathname === '/home' && new URLSearchParams(location.search).get('q')) {
+        navigate('/home', { replace: true });
+      }
+      return;
+    }
+    const timer = setTimeout(() => {
+      navigate(`/home?q=${encodeURIComponent(trimmed)}`, { replace: true });
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [searchQuery]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Sync input value when URL changes (e.g. browser back/fwd)
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const urlQ = params.get('q') || '';
+    setSearchQuery(prev => (prev !== urlQ ? urlQ : prev));
+  }, [location.search]);
+
+  // Close search results dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setShowSearchResults(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSearchKeyDown = (e) => {
+    if (e.key === 'Enter' && searchQuery.trim()) {
+      navigate(`/home?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+    if (e.key === 'Escape') {
+      setSearchQuery('');
+    }
+  };
+
   return (
     <>
       <header className="header">
@@ -66,14 +117,28 @@ const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => 
           )}
 
           {showSearch && (
-            <div className="header__search">
+            <div className="header__search" ref={searchRef}>
               <div className="header__search-wrapper">
                 <span className="material-symbols-outlined header__search-icon">search</span>
                 <input
+                  id="header-search-input"
                   type="text"
                   className="header__search-input"
-                  placeholder="Search insights..."
+                  placeholder="Search insights, companies..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={handleSearchKeyDown}
+                  autoComplete="off"
                 />
+                {searchQuery && (
+                  <button
+                    className="header__search-clear"
+                    onClick={() => { setSearchQuery(''); navigate('/home', { replace: true }); }}
+                    aria-label="Clear search"
+                  >
+                    <span className="material-symbols-outlined">close</span>
+                  </button>
+                )}
               </div>
             </div>
           )}

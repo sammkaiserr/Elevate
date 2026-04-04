@@ -4,6 +4,41 @@ import Post from '../_models/Post.js';
 
 const router = express.Router();
 
+// ─── Search endpoint ────────────────────────────────────────────────────────
+router.get('/search', async (req, res) => {
+  try {
+    const q = (req.query.q || '').trim();
+    if (!q) return res.json([]);
+
+    const regex = new RegExp(q, 'i');
+    const posts = await Post.find({
+      archived: false,
+      $or: [
+        { title: regex },
+        { content: regex },
+        { tags: regex },
+      ],
+    })
+      .populate('user_id', 'full_name avatar_url job_title')
+      .sort({ created_at: -1 })
+      .limit(50);
+
+    const formatted = posts.map(p => {
+      const obj = p.toObject();
+      obj.profiles = obj.user_id;
+      obj.user_id = obj.user_id ? (obj.user_id._id || obj.user_id) : null;
+      obj.id = obj._id.toString();
+      return obj;
+    });
+
+    res.json(formatted);
+  } catch (err) {
+    console.error('Error searching posts:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+// ────────────────────────────────────────────────────────────────────────────
+
 router.get('/', async (req, res) => {
   try {
     const posts = await Post.find({ archived: false })

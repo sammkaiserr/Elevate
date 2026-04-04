@@ -67,11 +67,39 @@
 
 .header__search-input:focus {
   box-shadow: 0 0 0 2px rgba(0, 32, 69, 0.2);
+  outline: none;
 }
 
 .header__search-input::placeholder {
   color: var(--on-surface-variant);
 }
+
+/* ── Clear (×) button inside search bar ── */
+.header__search-clear {
+  position: absolute;
+  right: 0.625rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--surface-container-high);
+  color: var(--on-surface-variant);
+  transition: background var(--transition-normal);
+}
+
+.header__search-clear:hover {
+  background: var(--surface-container-highest);
+  color: var(--on-surface);
+}
+
+.header__search-clear .material-symbols-outlined {
+  font-size: 0.875rem;
+}
+
 
 .header__actions {
   display: flex;

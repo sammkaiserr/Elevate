@@ -2,6 +2,39 @@
    HOME / FEED PAGE
    ============================================ */
 
+/* ── Search result banner ── */
+.home__search-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  padding: 0.625rem 1rem;
+  border-radius: var(--radius-lg);
+  background: var(--secondary-container);
+  color: var(--on-secondary-container);
+  font-size: 0.875rem;
+  font-weight: 600;
+  animation: fadeInDown 0.2s ease;
+}
+
+.home__search-banner .material-symbols-outlined {
+  font-size: 1.125rem;
+}
+
+/* ── Keyword highlight ── */
+.home__search-highlight {
+  background: #fef08a;        /* warm yellow */
+  color: #713f12;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+:root.dark .home__search-highlight {
+  background: rgba(253, 224, 71, 0.25);
+  color: #fde047;
+}
+
+
 .home__feed {
   max-width: 48rem;
   margin: 0 auto;
