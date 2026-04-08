@@ -38,7 +38,6 @@ export default function Sidebar({
               </div>
               <div>
                 <h1 className="text-sm font-bold tracking-tight">ResumeAI</h1>
-                <p className="text-[11px] text-zinc-500 font-medium">Job Analyzer Pro</p>
               </div>
             </div>
             <button
@@ -129,18 +128,7 @@ export default function Sidebar({
           )}
         </div>
 
-        {/* Footer */}
-        <div className="p-4 border-t border-white/5">
-          <div className="flex items-center gap-2.5 px-2">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 flex items-center justify-center">
-              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse-soft" />
-            </div>
-            <div>
-              <p className="text-[11px] text-zinc-400 font-medium">Powered by AI</p>
-              <p className="text-[10px] text-zinc-600">Llama 3.3</p>
-            </div>
-          </div>
-        </div>
+
       </aside>
     </>
   );
