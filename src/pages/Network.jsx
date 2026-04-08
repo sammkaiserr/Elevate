@@ -83,15 +83,35 @@ const Network = () => {
     fetchData();
   }, [fetchData]);
 
-  // Send connection request
+  // Send connection request — optimistic update so button changes immediately
   const sendRequest = async (addresseeId) => {
     setActionLoading((prev) => ({ ...prev, [addresseeId]: true }));
     try {
-      await apiFetch('/connections', {
+      const conn = await apiFetch('/connections', {
         method: 'POST',
         body: JSON.stringify({ addressee_id: addresseeId, status: 'pending' })
       });
-      await fetchData();
+
+      // Optimistic update: immediately remove from suggestions + add to pendingSent
+      // so the UI reflects "Requested" without waiting for a full refetch
+      const sentProfile = suggestions.find(p => (p._id || p.id) === addresseeId);
+      setSuggestions(prev => prev.filter(p => (p._id || p.id) !== addresseeId));
+      if (sentProfile) {
+        setPendingSent(prev => [
+          ...prev,
+          {
+            ...conn,
+            id: conn._id || conn.id,
+            profile: sentProfile,
+            requester_id: sentProfile,
+            addressee_id: addresseeId,
+            status: 'pending',
+          }
+        ]);
+      }
+
+      // Also sync in background to ensure full consistency
+      fetchData();
     } catch (err) {
       console.error('Error sending request:', err);
     }
