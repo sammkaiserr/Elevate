@@ -1,6 +1,7 @@
 import express from 'express';
 import { requireAuth } from '@clerk/express';
 import Connection from '../_models/Connection.js';
+import Profile from '../_models/Profile.js';
 
 const router = express.Router();
 
@@ -9,14 +10,26 @@ router.get('/', requireAuth(), async (req, res) => {
     const userId = req.auth.userId;
     const connections = await Connection.find({
       $or: [{ requester_id: userId }, { addressee_id: userId }]
-    }).populate('requester_id addressee_id', 'full_name avatar_url job_title');
-    
-    const formatted = connections.map(c => {
-      const obj = c.toObject();
-      obj.id = obj._id.toString();
-      return obj;
+    }).lean();
+
+    // Manually enrich profiles — populate() silently fails on String refs
+    const allUserIds = new Set();
+    connections.forEach(c => {
+      if (c.requester_id) allUserIds.add(c.requester_id);
+      if (c.addressee_id) allUserIds.add(c.addressee_id);
     });
-    
+
+    const profiles = await Profile.find({ _id: { $in: [...allUserIds] } }).lean();
+    const profileMap = {};
+    profiles.forEach(p => { profileMap[p._id] = p; });
+
+    const formatted = connections.map(c => ({
+      ...c,
+      id: c._id.toString(),
+      requester_id: profileMap[c.requester_id] || c.requester_id,
+      addressee_id: profileMap[c.addressee_id] || c.addressee_id,
+    }));
+
     res.json(formatted);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -29,14 +42,23 @@ router.post('/', requireAuth(), async (req, res) => {
     const conn = new Connection(req.body);
     await conn.save();
 
-    // Send a notification to the addressee
+    // Send a notification to the addressee with the requester's name
     if (req.body.addressee_id && req.body.addressee_id !== req.auth.userId) {
       try {
         const Notification = (await import('../_models/Notification.js')).default;
+        const Profile = (await import('../_models/Profile.js')).default;
+        
+        // Look up requester name for a meaningful notification message
+        let requesterName = 'Someone';
+        try {
+          const requesterProfile = await Profile.findById(req.auth.userId).lean();
+          if (requesterProfile?.full_name) requesterName = requesterProfile.full_name;
+        } catch (e) { /* ignore */ }
+
         const MessageNotif = new Notification({
           user_id: req.body.addressee_id,
           type: 'connection_request',
-          message: 'Someone wants to connect with you.',
+          message: `${requesterName} has sent you a connection request.`,
           is_read: false
         });
         await MessageNotif.save();
@@ -55,6 +77,22 @@ router.put('/:id', requireAuth(), async (req, res) => {
   try {
     const conn = await Connection.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(conn);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete('/:id', requireAuth(), async (req, res) => {
+  try {
+    const conn = await Connection.findById(req.params.id);
+    if (!conn) return res.status(404).json({ error: 'Connection not found' });
+    // Only allow requester or addressee to delete
+    const userId = req.auth.userId;
+    if (conn.requester_id !== userId && conn.addressee_id !== userId) {
+      return res.status(403).json({ error: 'Unauthorized' });
+    }
+    await Connection.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

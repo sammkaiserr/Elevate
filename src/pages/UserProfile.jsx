@@ -77,7 +77,9 @@ const UserProfile = () => {
   const withdrawRequest = async () => {
     setActionLoading(true);
     try {
-      console.warn("Delete connection not implemented in backend yet");
+      if (connectionId) {
+        await apiFetch(`/connections/${connectionId}`, { method: 'DELETE' });
+      }
       setConnectionStatus('none');
       setConnectionId(null);
     } catch (err) {
@@ -118,7 +120,9 @@ const UserProfile = () => {
   const removeConnection = async () => {
     setActionLoading(true);
     try {
-      console.warn("Delete connection not implemented in backend yet");
+      if (connectionId) {
+        await apiFetch(`/connections/${connectionId}`, { method: 'DELETE' });
+      }
       setConnectionStatus('none');
       setConnectionId(null);
     } catch (err) {

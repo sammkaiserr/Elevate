@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { apiFetch } from '../config/api';
 import MainLayout from '../components/layout/MainLayout';
@@ -8,7 +8,8 @@ import './Network.css';
 const Network = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('suggestions');
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(() => location.state?.tab || 'suggestions');
   const [suggestions, setSuggestions] = useState([]);
   const [pendingReceived, setPendingReceived] = useState([]);
   const [pendingSent, setPendingSent] = useState([]);
@@ -97,13 +98,11 @@ const Network = () => {
     setActionLoading((prev) => ({ ...prev, [addresseeId]: false }));
   };
 
-  // Withdraw sent request (actually a delete)
+  // Withdraw sent request
   const withdrawRequest = async (connectionId) => {
     setActionLoading((prev) => ({ ...prev, [connectionId]: true }));
     try {
-      // We don't have DELETE /connections/:id yet, let's use PUT and set status to rejected maybe?
-      // Actually, I can just not implement this right now or implement a quick DELETE manually in the backend. Let's just catch error
-      console.warn("Delete connection not implemented in backend yet");
+      await apiFetch(`/connections/${connectionId}`, { method: 'DELETE' });
       await fetchData();
     } catch (err) {
       console.error('Error withdrawing request:', err);
@@ -145,7 +144,7 @@ const Network = () => {
   const removeConnection = async (connectionId) => {
     setActionLoading((prev) => ({ ...prev, [connectionId]: true }));
     try {
-      console.warn("Delete connection not implemented in backend yet");
+      await apiFetch(`/connections/${connectionId}`, { method: 'DELETE' });
       await fetchData();
     } catch (err) {
       console.error('Error removing connection:', err);
@@ -243,19 +242,20 @@ const Network = () => {
     if (filteredSuggestions.length === 0) return renderEmpty('suggestions');
     return (
       <div className="network__grid">
-        {filteredSuggestions.map((profile) =>
-          renderUserCard(
+        {filteredSuggestions.map((profile) => {
+          const pid = profile._id || profile.id;
+          return renderUserCard(
             profile,
             <button
               className="network__btn network__btn--connect"
-              onClick={() => sendRequest(profile.id)}
-              disabled={actionLoading[profile.id]}
+              onClick={() => sendRequest(pid)}
+              disabled={actionLoading[pid]}
             >
               <span className="material-symbols-outlined">person_add</span>
-              {actionLoading[profile.id] ? 'Sending...' : 'Connect'}
+              {actionLoading[pid] ? 'Sending...' : 'Connect'}
             </button>
-          )
-        )}
+          );
+        })}
       </div>
     );
   };

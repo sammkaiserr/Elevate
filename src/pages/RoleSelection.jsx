@@ -1,13 +1,28 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { apiFetch } from '../config/api';
 import './RoleSelection.css';
 
 const RoleSelection = () => {
   const [selectedRole, setSelectedRole] = useState(null);
+  const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
-  const handleNext = () => {
-    if (!selectedRole) return;
+  const handleNext = async () => {
+    if (!selectedRole || !user) return;
+    setSaving(true);
+    try {
+      // Persist the role to the user's profile so it shows correctly everywhere
+      await apiFetch(`/profiles/${user.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ role: selectedRole }),
+      });
+    } catch (err) {
+      console.error('Failed to save role:', err);
+    }
+    setSaving(false);
     navigate(selectedRole === 'professional' ? '/profile/professional' : '/profile/student');
   };
 
@@ -76,14 +91,14 @@ const RoleSelection = () => {
             <button 
               className="btn-gradient role-selection__next-btn" 
               onClick={handleNext}
-              disabled={!selectedRole}
+              disabled={!selectedRole || saving}
               style={{ 
                 opacity: selectedRole ? 1 : 0.5, 
                 cursor: selectedRole ? 'pointer' : 'not-allowed',
                 filter: selectedRole ? 'none' : 'grayscale(100%)'
               }}
             >
-              Next
+              {saving ? 'Saving...' : 'Next'}
               <span className="material-symbols-outlined">chevron_right</span>
             </button>
             <div className="role-selection__login-link">

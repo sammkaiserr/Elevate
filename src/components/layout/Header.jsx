@@ -161,6 +161,7 @@ const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => 
                 onClick={() => setShowNotifications(!showNotifications)}
               >
                 <span className="material-symbols-outlined">notifications</span>
+                <NotificationBadge />
               </button>
 
               {showNotifications && (
@@ -179,12 +180,12 @@ const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => 
                     <button className="header__notif-tab active">All</button>
                   </div>
 
-                  <NotificationList />
+                  <NotificationList onClose={() => setShowNotifications(false)} />
                 </div>
               )}
             </div>
 
-            <Link to="/profile/student" className="header__avatar">
+            <Link to={profile?.role === 'professional' ? '/profile/professional' : '/profile/student'} className="header__avatar">
               {profile?.avatar_url
                 ? <img src={profile.avatar_url} alt="avatar" className="header__avatar-img" />
                 : <span className="header__avatar-fallback">{initials}</span>
@@ -255,12 +256,38 @@ const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => 
   );
 };
 
-const NotificationList = () => {
-  const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
+const NotificationBadge = () => {
+  const [count, setCount] = React.useState(0);
 
-  useEffect(() => {
-    // import apiFetch from api
+  React.useEffect(() => {
+    import('../../config/api').then(({ apiFetch }) => {
+      apiFetch('/notifications').then(data => {
+        if (data && Array.isArray(data)) {
+          setCount(data.filter(n => !n.is_read).length);
+        }
+      }).catch(() => {});
+    });
+  }, []);
+
+  if (count === 0) return null;
+  return (
+    <span style={{
+      position: 'absolute', top: '4px', right: '4px',
+      background: '#ef4444', color: 'white',
+      fontSize: '10px', fontWeight: 700,
+      borderRadius: '999px', minWidth: '16px', height: '16px',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: '0 3px', pointerEvents: 'none'
+    }}>{count > 9 ? '9+' : count}</span>
+  );
+};
+
+const NotificationList = ({ onClose }) => {
+  const [notifications, setNotifications] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
     import('../../config/api').then(({ apiFetch }) => {
       apiFetch('/notifications').then(data => {
         if (data && Array.isArray(data)) {
@@ -274,13 +301,18 @@ const NotificationList = () => {
     });
   }, []);
 
-  const markRead = async (id) => {
+  const markRead = async (notif) => {
     import('../../config/api').then(({ apiFetch }) => {
-      apiFetch(`/notifications/${id}`, { method: 'PUT', body: JSON.stringify({ is_read: true }) })
+      apiFetch(`/notifications/${notif.id}`, { method: 'PUT', body: JSON.stringify({ is_read: true }) })
         .then(() => {
-          setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
+          setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, is_read: true } : n));
         });
     });
+    // Navigate based on type
+    if (notif.type === 'connection_request') {
+      if (onClose) onClose();
+      navigate('/network', { state: { tab: 'pending' } });
+    }
   };
 
   if (loading) {
@@ -304,7 +336,7 @@ const NotificationList = () => {
       {notifications.map(notif => (
         <div 
           key={notif.id} 
-          onClick={() => markRead(notif.id)}
+          onClick={() => markRead(notif)}
           className={`p-3 border-b border-zinc-100 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800 cursor-pointer transition ${!notif.is_read ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''}`}
         >
           <div className="flex items-start gap-3">
@@ -313,8 +345,11 @@ const NotificationList = () => {
                 {notif.type === 'connection_request' ? 'person_add' : 'notifications'}
               </span>
             </div>
-            <div>
+            <div style={{ flex: 1 }}>
               <p className="text-sm text-zinc-800 dark:text-zinc-200">{notif.message}</p>
+              {notif.type === 'connection_request' && (
+                <p className="text-xs text-blue-500 mt-0.5">Click to view in Network →</p>
+              )}
               <span className="text-xs text-zinc-500 mt-1 block">
                 {new Date(notif.created_at).toLocaleDateString()}
               </span>
