@@ -75,11 +75,18 @@ const StudentProfileSetup = () => {
     if (!user) return;
     setPostsLoading(true);
     try {
-      const myPostsData = await apiFetch('/posts/my');
+      // Use /posts/user/:id (open endpoint) instead of /posts/my (requires auth)
+      // This avoids Clerk token validation issues on Vercel serverless
+      const myPostsData = await apiFetch(`/posts/user/${user.id}`);
       setMyPosts(myPostsData || []);
 
-      const archData = await apiFetch('/posts/archived');
-      setArchivedPosts(archData || []);
+      // Try to fetch archived posts; gracefully handle auth failures
+      try {
+        const archData = await apiFetch('/posts/archived');
+        setArchivedPosts(archData || []);
+      } catch {
+        setArchivedPosts([]);
+      }
     } catch (err) {
       console.error('Error fetching posts:', err);
     }
