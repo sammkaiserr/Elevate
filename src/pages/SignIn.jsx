@@ -6,7 +6,6 @@ import './SignIn.css';
 const SignIn = () => {
   const { isSignedIn, isLoaded } = useAuth();
 
-  // Redirect already-signed-in users straight to the app
   if (isLoaded && isSignedIn) {
     return <Navigate to="/home" replace />;
   }
@@ -28,7 +27,7 @@ const SignIn = () => {
         </div>
       </main>
 
-      {/* Decorative orbs */}
+      
       <div className="signin__orb signin__orb--1"></div>
       <div className="signin__orb signin__orb--2"></div>
     </div>

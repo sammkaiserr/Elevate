@@ -12,7 +12,6 @@ router.get('/', requireAuth(), async (req, res) => {
       $or: [{ requester_id: userId }, { addressee_id: userId }]
     }).lean();
 
-    // Manually enrich profiles — populate() silently fails on String refs
     const allUserIds = new Set();
     connections.forEach(c => {
       if (c.requester_id) allUserIds.add(c.requester_id);
@@ -42,18 +41,17 @@ router.post('/', requireAuth(), async (req, res) => {
     const conn = new Connection(req.body);
     await conn.save();
 
-    // Send a notification to the addressee with the requester's name
     if (req.body.addressee_id && req.body.addressee_id !== req.auth.userId) {
       try {
         const Notification = (await import('../_models/Notification.js')).default;
         const Profile = (await import('../_models/Profile.js')).default;
         
-        // Look up requester name for a meaningful notification message
+
         let requesterName = 'Someone';
         try {
           const requesterProfile = await Profile.findById(req.auth.userId).lean();
           if (requesterProfile?.full_name) requesterName = requesterProfile.full_name;
-        } catch (e) { /* ignore */ }
+        } catch (e) {  }
 
         const MessageNotif = new Notification({
           user_id: req.body.addressee_id,
@@ -86,7 +84,7 @@ router.delete('/:id', requireAuth(), async (req, res) => {
   try {
     const conn = await Connection.findById(req.params.id);
     if (!conn) return res.status(404).json({ error: 'Connection not found' });
-    // Only allow requester or addressee to delete
+
     const userId = req.auth.userId;
     if (conn.requester_id !== userId && conn.addressee_id !== userId) {
       return res.status(403).json({ error: 'Unauthorized' });

@@ -18,7 +18,6 @@ router.post("/", upload.single("resume"), async (req, res) => {
       return res.status(400).json({ error: "Only PDF files are accepted" });
     }
 
-    // Extract text from PDF
     const pdfData = await pdfParse(req.file.buffer);
     const resumeText = pdfData.text;
 
@@ -28,7 +27,6 @@ router.post("/", upload.single("resume"), async (req, res) => {
         .json({ error: "Could not extract text from PDF" });
     }
 
-    // Analyze resume with Groq Llama/Gemini
     const analysis = await analyzeResume(resumeText);
 
     return res.json({

@@ -18,7 +18,6 @@ const Network = () => {
   const [actionLoading, setActionLoading] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Fetch all connection data
   const fetchData = useCallback(async () => {
     if (!user) return;
     setLoading(true);
@@ -33,7 +32,7 @@ const Network = () => {
       const connectedUserIds = new Set();
 
       conns.forEach((c) => {
-        // Due to populate, requester_id and addressee_id might be objects
+
         const reqId = c.requester_id?._id || c.requester_id;
         const addId = c.addressee_id?._id || c.addressee_id;
         
@@ -42,7 +41,7 @@ const Network = () => {
         
         connectedUserIds.add(otherUserId);
         
-        // Emulate the enrich mapping
+
         const enriched = { ...c, profile: typeof otherProfile === 'object' ? otherProfile : null };
 
         if (c.status === 'accepted') {
@@ -60,7 +59,6 @@ const Network = () => {
       setPendingSent(sentPending);
       setPendingReceived(receivedPending);
 
-      // Fetch all profiles for suggestions
       try {
         const allProfiles = await apiFetch('/profiles');
         const suggestionsList = (allProfiles || []).filter(p => {
@@ -83,7 +81,6 @@ const Network = () => {
     fetchData();
   }, [fetchData]);
 
-  // Send connection request — optimistic update so button changes immediately
   const sendRequest = async (addresseeId) => {
     setActionLoading((prev) => ({ ...prev, [addresseeId]: true }));
     try {
@@ -92,8 +89,6 @@ const Network = () => {
         body: JSON.stringify({ addressee_id: addresseeId, status: 'pending' })
       });
 
-      // Optimistic update: immediately remove from suggestions + add to pendingSent
-      // so the UI reflects "Requested" without waiting for a full refetch
       const sentProfile = suggestions.find(p => (p._id || p.id) === addresseeId);
       setSuggestions(prev => prev.filter(p => (p._id || p.id) !== addresseeId));
       if (sentProfile) {
@@ -110,7 +105,6 @@ const Network = () => {
         ]);
       }
 
-      // Also sync in background to ensure full consistency
       fetchData();
     } catch (err) {
       console.error('Error sending request:', err);
@@ -118,7 +112,6 @@ const Network = () => {
     setActionLoading((prev) => ({ ...prev, [addresseeId]: false }));
   };
 
-  // Withdraw sent request
   const withdrawRequest = async (connectionId) => {
     setActionLoading((prev) => ({ ...prev, [connectionId]: true }));
     try {
@@ -130,7 +123,6 @@ const Network = () => {
     setActionLoading((prev) => ({ ...prev, [connectionId]: false }));
   };
 
-  // Accept connection request
   const acceptRequest = async (connectionId) => {
     setActionLoading((prev) => ({ ...prev, [connectionId]: true }));
     try {
@@ -145,7 +137,6 @@ const Network = () => {
     setActionLoading((prev) => ({ ...prev, [connectionId]: false }));
   };
 
-  // Reject connection request
   const rejectRequest = async (connectionId) => {
     setActionLoading((prev) => ({ ...prev, [connectionId]: true }));
     try {
@@ -160,7 +151,6 @@ const Network = () => {
     setActionLoading((prev) => ({ ...prev, [connectionId]: false }));
   };
 
-  // Remove connection
   const removeConnection = async (connectionId) => {
     setActionLoading((prev) => ({ ...prev, [connectionId]: true }));
     try {
@@ -172,7 +162,6 @@ const Network = () => {
     setActionLoading((prev) => ({ ...prev, [connectionId]: false }));
   };
 
-  // Get initials from a name
   const getInitials = (name) => {
     if (!name) return '?';
     return name
@@ -183,7 +172,6 @@ const Network = () => {
       .slice(0, 2);
   };
 
-  // Filter suggestions by search query
   const filteredSuggestions = suggestions.filter((p) => {
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
@@ -196,7 +184,6 @@ const Network = () => {
     );
   });
 
-  // Get badge counts
   const pendingCount = pendingReceived.length;
   const sentCount = pendingSent.length;
 

@@ -6,7 +6,6 @@ const ChatSidebar = ({ conversations, selectedChat, setSelectedChat, fetchConver
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Helper to get the other user in 1-on-1 chats
   const getSender = (users) => {
     return users?.find(user => user._id !== currentUserId) || users[0];
   };

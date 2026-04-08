@@ -60,7 +60,6 @@ const StudentProfileSetup = () => {
     fetchMyPosts();
   }, [user, profile, navigate]);
 
-  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -75,12 +74,10 @@ const StudentProfileSetup = () => {
     if (!user) return;
     setPostsLoading(true);
     try {
-      // Use /posts/user/:id (open endpoint) instead of /posts/my (requires auth)
-      // This avoids Clerk token validation issues on Vercel serverless
+
       const myPostsData = await apiFetch(`/posts/user/${user.id}`);
       setMyPosts(myPostsData || []);
 
-      // Try to fetch archived posts; gracefully handle auth failures
       try {
         const archData = await apiFetch('/posts/archived');
         setArchivedPosts(archData || []);
@@ -144,13 +141,13 @@ const StudentProfileSetup = () => {
     if (!file || !user) return;
     setAvatarUploading(true);
     
-    // Read file as Base64 for MVP MongoDB storage
+
     const reader = new FileReader();
     reader.onloadend = async () => {
        try {
-         const publicUrl = reader.result; // data:image/png;base64,...
+         const publicUrl = reader.result;
          setLocalAvatar(publicUrl);
-         // Update in database using apiFetch instead of auth sync directly if needed, but updateAvatar in AuthContext does it.
+
          await updateAvatar(publicUrl);
          showToast('Profile photo updated!');
        } catch (err) {
@@ -161,7 +158,6 @@ const StudentProfileSetup = () => {
     reader.readAsDataURL(file);
   };
 
-  // Post actions
   const handleEditPost = (post) => {
     navigate(`/create?edit=${post.id}`);
   };
@@ -233,7 +229,7 @@ const StudentProfileSetup = () => {
     <div className="student-profile">
       <Header variant="minimal" />
 
-      {/* Toast */}
+      
       {toast && (
         <div style={{
           position: 'fixed', top: '5rem', left: '50%', transform: 'translateX(-50%)',
@@ -247,7 +243,7 @@ const StudentProfileSetup = () => {
       )}
 
       <main className="student-profile__main">
-        {/* Left Sidebar */}
+        
         <aside className="student-profile__sidebar">
           <div>
             <h1>{isEditing ? 'Build your profile' : 'Your Profile'}</h1>
@@ -286,7 +282,7 @@ const StudentProfileSetup = () => {
           </nav>}
         </aside>
 
-        {/* Main Form */}
+        
         <div className="student-profile__form-wrapper">
           <section className="student-profile__form-card">
             {isEditing ? (
@@ -361,7 +357,7 @@ const StudentProfileSetup = () => {
                           {interest}
                         </button>
                       ))}
-                      {/* Render any active custom interests not in the default list */}
+                      
                       {activeInterests.filter(i => !interestsList.includes(i)).map(interest => (
                         <button
                           key={interest} type="button"
@@ -411,7 +407,7 @@ const StudentProfileSetup = () => {
               <div className="student-profile__view">
                 <div className="student-profile__view-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    {/* Avatar with upload overlay */}
+                    
                     <div
                       onClick={handleAvatarClick}
                       style={{
@@ -428,7 +424,7 @@ const StudentProfileSetup = () => {
                         ? <img src={avatarSrc} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         : firstLetter
                       }
-                      {/* Hover overlay */}
+                      
                       <div className="sp-avatar-overlay">
                         {avatarUploading
                           ? <span className="material-symbols-outlined" style={{ fontSize: '1.25rem', animation: 'spin 1s linear infinite' }}>progress_activity</span>
@@ -473,7 +469,7 @@ const StudentProfileSetup = () => {
             )}
           </section>
 
-          {/* User Posts Section */}
+          
           {!isEditing && (
             <section className="student-profile__posts-section" style={{ marginTop: '2.5rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
@@ -509,7 +505,7 @@ const StudentProfileSetup = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }} ref={menuRef}>
                   {(activeTab === 'published' ? myPosts : archivedPosts).map(post => (
                     <article key={post.id} style={{ background: 'white', padding: '1.5rem', borderRadius: '16px', border: '1px solid var(--border-color)', position: 'relative', opacity: activeTab === 'archived' ? 0.8 : 1 }}>
-                      {/* Three-dot action menu */}
+                      
                       <div style={{ position: 'absolute', top: '1rem', right: '1rem' }}>
                         <button
                           onClick={() => setOpenMenuId(openMenuId === post.id ? null : post.id)}

@@ -15,7 +15,6 @@ const Home = () => {
   const { user, profile } = useAuth();
   const location = useLocation();
 
-  // Read ?q= from the URL (set by the Header search bar)
   const searchQuery = new URLSearchParams(location.search).get('q') || '';
 
   useEffect(() => {
@@ -24,7 +23,7 @@ const Home = () => {
     } else {
       fetchPosts();
     }
-  }, [searchQuery]); // re-run whenever search query changes
+  }, [searchQuery]);
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -133,7 +132,7 @@ const Home = () => {
   return (
     <MainLayout showRightSidebar>
       <div className="home__feed">
-        {/* Toast */}
+        
         {toast && (
           <div
             style={{
@@ -156,7 +155,7 @@ const Home = () => {
           </div>
         )}
 
-        {/* Search results banner */}
+        
         {searchQuery && !loading && (
           <div className="home__search-banner">
             <span className="material-symbols-outlined">search</span>
@@ -168,7 +167,7 @@ const Home = () => {
           </div>
         )}
 
-        {/* Posts */}
+        
         <div className="home__posts">
           {loading ? (
             <div className="home__feed-empty">
@@ -203,7 +202,6 @@ const Home = () => {
               const timeAgo = getTimeAgo(post.created_at);
               const voted = votedPosts[post.id];
 
-              // Strip HTML tags for plain-text preview
               const plainContent = (post.content || '').replace(/<[^>]+>/g, '');
               const previewText =
                 plainContent.substring(0, 200) +
@@ -254,12 +252,12 @@ const Home = () => {
                       </div>
                     </div>
 
-                    {/* Title with keyword highlight */}
+                    
                     <h2 className="home__post-title">
                       {highlightText(post.title, searchQuery)}
                     </h2>
 
-                    {/* Content preview with keyword highlight */}
+                    
                     {previewText && (
                       <p className="home__post-text">
                         {highlightText(previewText, searchQuery)}
@@ -332,7 +330,7 @@ const Home = () => {
                       </div>
                     </div>
 
-                    {/* Comment list */}
+                    
                     {expandedComments[post.id] && (
                       <div className="px-4 pb-4">
                         <CommentList
@@ -360,15 +358,13 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Right Sidebar */}
+      
       <aside className="home__right-sidebar">
         <div className="home__right-sidebar-sections"></div>
       </aside>
     </MainLayout>
   );
 };
-
-// ─── Helpers ────────────────────────────────────────────────────────────────
 
 function getTimeAgo(dateStr) {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -381,10 +377,6 @@ function getTimeAgo(dateStr) {
   return `${days}d ago`;
 }
 
-/**
- * Wraps every occurrence of `keyword` in `text` with a <mark> element.
- * Returns an array of strings / React elements suitable for JSX.
- */
 function highlightText(text, keyword) {
   if (!keyword || !text) return text;
   try {

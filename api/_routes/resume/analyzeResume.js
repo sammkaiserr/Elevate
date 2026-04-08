@@ -60,7 +60,6 @@ ${resumeText}`;
   const data = await response.json();
   let text = data.choices?.[0]?.message?.content || "";
 
-  // Clean up response - remove markdown code blocks if present
   text = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
 
   try {

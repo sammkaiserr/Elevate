@@ -22,10 +22,9 @@ const CreateBlog = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  // Load post data in edit mode
   useEffect(() => {
     if (isEditMode && editId) {
-      // NOTE: Our backend doesn't have GET /:id for posts yet, we could use GET / and filter
+
       apiFetch('/posts').then((posts) => {
         const data = posts.find(p => p.id === editId || p._id === editId);
         if (data) {
@@ -84,7 +83,7 @@ const CreateBlog = () => {
     try {
       if (!user?.id) throw new Error('You must be logged in to publish a post.');
 
-      let coverImageUrl = coverImagePreview || ''; // We use the base64 preview string directly
+      let coverImageUrl = coverImagePreview || '';
 
       const content = bodyRef.current?.innerHTML || '';
 

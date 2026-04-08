@@ -5,7 +5,6 @@ import Post from '../_models/Post.js';
 
 const router = express.Router();
 
-// Get comments for a post
 router.get('/:postId', async (req, res) => {
   try {
     const comments = await Comment.find({ post_id: req.params.postId })
@@ -26,7 +25,6 @@ router.get('/:postId', async (req, res) => {
   }
 });
 
-// Create a new comment
 router.post('/', requireAuth(), async (req, res) => {
   try {
     const auth = getAuth(req);
@@ -43,7 +41,7 @@ router.post('/', requireAuth(), async (req, res) => {
 
     await comment.populate('user_id', 'full_name avatar_url job_title');
     
-    // Increment post comment count
+
     await Post.findByIdAndUpdate(post_id, { $inc: { comment_count: 1 } });
 
     const obj = comment.toObject();

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext'; // profile only — auth state is via Clerk
+import { useAuth } from '../../context/AuthContext';
 import './Header.css';
 
 const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => {
@@ -9,7 +9,7 @@ const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => 
   const [showNotifications, setShowNotifications] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
   const [searchQuery, setSearchQuery] = useState(() => {
-    // Pre-fill from URL on mount so the box stays synced when navigating back
+
     const params = new URLSearchParams(window.location.search);
     return params.get('q') || '';
   });
@@ -40,7 +40,6 @@ const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => 
     ? profile.full_name.charAt(0).toUpperCase()
     : 'U';
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (notifRef.current && !notifRef.current.contains(e.target)) {
@@ -51,11 +50,10 @@ const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => 
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Debounced search: navigate to /home?q=... 400 ms after the user stops typing
   useEffect(() => {
     const trimmed = searchQuery.trim();
     if (!trimmed) {
-      // Clear search — go back to normal feed
+
       if (location.pathname === '/home' && new URLSearchParams(location.search).get('q')) {
         navigate('/home', { replace: true });
       }
@@ -65,16 +63,14 @@ const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => 
       navigate(`/home?q=${encodeURIComponent(trimmed)}`, { replace: true });
     }, 400);
     return () => clearTimeout(timer);
-  }, [searchQuery]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
 
-  // Sync input value when URL changes (e.g. browser back/fwd)
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const urlQ = params.get('q') || '';
     setSearchQuery(prev => (prev !== urlQ ? urlQ : prev));
   }, [location.search]);
 
-  // Close search results dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
@@ -144,7 +140,7 @@ const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => 
           )}
 
           <div className="header__actions">
-            {/* Theme Toggle */}
+            
             <button
               className="theme-toggle"
               onClick={() => setIsDarkMode(!isDarkMode)}
@@ -154,7 +150,7 @@ const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => 
               <span className="material-symbols-outlined theme-toggle-icon moon">dark_mode</span>
             </button>
 
-            {/* Notification Bell + Dropdown */}
+            
             <div className="header__notif-wrapper hide-mobile" ref={notifRef}>
               <button
                 className={`header__icon-btn ${showNotifications ? 'header__icon-btn--active' : ''}`}
@@ -195,7 +191,7 @@ const Header = ({ variant = 'default', activeNav = '', hideSearch = false }) => 
         </div>
       </header>
 
-      {/* Slide-out Navigation Drawer */}
+      
       {showDrawer && (
         <div className="header__drawer-overlay" onClick={() => setShowDrawer(false)}>
           <nav className="header__drawer" onClick={(e) => e.stopPropagation()}>
@@ -308,7 +304,7 @@ const NotificationList = ({ onClose }) => {
           setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, is_read: true } : n));
         });
     });
-    // Navigate based on type
+
     if (notif.type === 'connection_request') {
       if (onClose) onClose();
       navigate('/network', { state: { tab: 'pending' } });

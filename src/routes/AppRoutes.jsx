@@ -15,7 +15,7 @@ import ResumeAnalyzer from '../pages/ResumeAnalyzer';
 
 const ProtectedRoute = ({ children }) => {
   const { isSignedIn, isLoaded } = useClerkAuth();
-  if (!isLoaded) return null; // Wait for Clerk to initialise
+  if (!isLoaded) return null;
   if (!isSignedIn) return <Navigate to="/" replace />;
   return children;
 };

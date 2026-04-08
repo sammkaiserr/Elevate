@@ -3,8 +3,6 @@ import { requireAuth, getAuth } from '@clerk/express';
 import Post from '../_models/Post.js';
 import Profile from '../_models/Profile.js';
 
-// Helper: attach profile info to an array of plain post objects
-// user_id on posts is a Clerk string ID — populate() won't work, so we do it manually.
 async function attachProfiles(posts) {
   const userIds = [...new Set(posts.map(p => p.user_id).filter(Boolean))];
   const profiles = userIds.length
@@ -22,7 +20,6 @@ async function attachProfiles(posts) {
 
 const router = express.Router();
 
-// ─── Search endpoint ────────────────────────────────────────────────────────
 router.get('/search', async (req, res) => {
   try {
     const q = (req.query.q || '').trim();
@@ -48,7 +45,6 @@ router.get('/search', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-// ────────────────────────────────────────────────────────────────────────────
 
 router.get('/', async (req, res) => {
   try {

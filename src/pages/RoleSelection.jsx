@@ -14,7 +14,7 @@ const RoleSelection = () => {
     if (!selectedRole || !user) return;
     setSaving(true);
     try {
-      // Persist the role to the user's profile so it shows correctly everywhere
+
       await apiFetch(`/profiles/${user.id}`, {
         method: 'PUT',
         body: JSON.stringify({ role: selectedRole }),
@@ -28,7 +28,7 @@ const RoleSelection = () => {
 
   return (
     <div className="role-selection">
-      {/* Simple header */}
+      
       <header className="role-selection__header">
         <div className="role-selection__header-inner">
           <span className="role-selection__brand">Elevate</span>
@@ -37,15 +37,15 @@ const RoleSelection = () => {
 
       <main className="role-selection__main">
         <div className="role-selection__content">
-          {/* Hero */}
+          
           <div className="role-selection__hero">
             <h1>Who are you?</h1>
             <p>Choose the path that best describes your current journey to personalize your Elevate experience.</p>
           </div>
 
-          {/* Role Cards */}
+          
           <div className="role-selection__cards">
-            {/* Student Card */}
+            
             <button
               className={`role-selection__card ${selectedRole === 'student' ? 'selected' : ''}`}
               onClick={() => setSelectedRole('student')}
@@ -65,7 +65,7 @@ const RoleSelection = () => {
               </div>
             </button>
 
-            {/* Professional Card */}
+            
             <button
               className={`role-selection__card ${selectedRole === 'professional' ? 'selected' : ''}`}
               onClick={() => setSelectedRole('professional')}
@@ -86,14 +86,14 @@ const RoleSelection = () => {
             </button>
           </div>
 
-          {/* Footer */}
+          
           <div className="role-selection__footer">
-            <button 
-              className="btn-gradient role-selection__next-btn" 
+            <button
+              className="btn-gradient role-selection__next-btn"
               onClick={handleNext}
               disabled={!selectedRole || saving}
-              style={{ 
-                opacity: selectedRole ? 1 : 0.5, 
+              style={{
+                opacity: selectedRole ? 1 : 0.5,
                 cursor: selectedRole ? 'pointer' : 'not-allowed',
                 filter: selectedRole ? 'none' : 'grayscale(100%)'
               }}
@@ -109,7 +109,7 @@ const RoleSelection = () => {
         </div>
       </main>
 
-      {/* Background decorations */}
+      
       <div className="role-selection__bg-low"></div>
       <div className="role-selection__bg-orb role-selection__bg-orb--1"></div>
       <div className="role-selection__bg-orb role-selection__bg-orb--2"></div>

@@ -5,7 +5,6 @@ import Profile from '../_models/Profile.js';
 
 const router = express.Router();
 
-// Get all conversations for a user
 router.get('/', requireAuth(), async (req, res) => {
   try {
     const auth = getAuth(req);
@@ -16,7 +15,6 @@ router.get('/', requireAuth(), async (req, res) => {
       .populate('latestMessage')
       .sort({ updatedAt: -1 });
 
-    // Populate sender of latest message
     const populatedConvos = await Profile.populate(conversations, {
       path: 'latestMessage.sender_id',
       select: 'full_name title image'
@@ -28,7 +26,6 @@ router.get('/', requireAuth(), async (req, res) => {
   }
 });
 
-// Create or fetch 1-on-1 chat
 router.post('/', requireAuth(), async (req, res) => {
   try {
     const auth = getAuth(req);
@@ -39,7 +36,6 @@ router.post('/', requireAuth(), async (req, res) => {
       return res.status(400).json({ error: 'Partner ID is required' });
     }
 
-    // Check if chat already exists
     let isChat = await Conversation.find({
       isGroupChat: false,
       $and: [
@@ -59,7 +55,6 @@ router.post('/', requireAuth(), async (req, res) => {
       return res.json(isChat[0]);
     }
 
-    // Create a new 1-on-1 chat
     const newChatData = {
       chatName: "sender",
       isGroupChat: false,
@@ -78,7 +73,6 @@ router.post('/', requireAuth(), async (req, res) => {
   }
 });
 
-// Create Group Chat
 router.post('/group', requireAuth(), async (req, res) => {
   try {
     const auth = getAuth(req);
@@ -94,7 +88,7 @@ router.post('/group', requireAuth(), async (req, res) => {
       return res.status(400).json({ error: "More than 2 users are required to form a group chat" });
     }
 
-    users.push(userId); // Add current user to group
+    users.push(userId);
 
     const groupChat = await Conversation.create({
       chatName: req.body.name,

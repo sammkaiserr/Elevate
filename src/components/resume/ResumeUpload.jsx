@@ -41,12 +41,12 @@ export default function ResumeUpload({ onUpload }) {
       >
         <input {...getInputProps()} />
 
-        {/* Background decoration */}
+        
         <div className="absolute inset-0 bg-gradient-to-b from-brand-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-b from-brand-100/20 to-transparent rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
         <div className="relative">
-          {/* Upload Icon */}
+          
           <div
             className={`
               w-20 h-20 mx-auto mb-6 rounded-2xl flex items-center justify-center

@@ -112,9 +112,6 @@
   color: var(--on-surface-variant);
 }
 
-/* ============================================
-   DARK MODE TOGGLE SWITCH
-   ============================================ */
 .settings-toggle {
   position: relative;
   width: 3.5rem;

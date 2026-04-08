@@ -1,6 +1,4 @@
-/* ============================================
-   CHAT SYSTEM
-   ============================================ */
+
 .chat {
   height: 100vh;
   display: flex;
@@ -9,14 +7,12 @@
   background: var(--background);
 }
 
-/* Chat Main */
 .chat__main {
   flex: 1;
   display: flex;
   overflow: hidden;
 }
 
-/* Left Panel */
 .chat__sidebar {
   width: 100%;
   flex-shrink: 0;
@@ -84,7 +80,6 @@
   font-size: 1.25rem;
 }
 
-/* Search */
 .chat__search {
   position: relative;
   width: 100%;
@@ -118,7 +113,6 @@
   color: var(--outline);
 }
 
-/* Tabs */
 .chat__tabs {
   display: flex;
   gap: 0.25rem;
@@ -161,7 +155,6 @@
   border-radius: 50%;
 }
 
-/* Conversation list */
 .chat__conv-list {
   flex: 1;
   overflow-y: auto;
@@ -171,7 +164,6 @@
   gap: 0.25rem;
 }
 
-/* Hide scrollbar */
 .chat__conv-list::-webkit-scrollbar { display: none; }
 .chat__conv-list { -ms-overflow-style: none; scrollbar-width: none; }
 
@@ -299,7 +291,6 @@
   border-radius: 50%;
 }
 
-/* Right Panel - Chat Area */
 .chat__area {
   flex: 1;
   display: none;
@@ -311,7 +302,6 @@
   .chat__area { display: flex; }
 }
 
-/* Chat header */
 .chat__area-header {
   height: 4.5rem;
   display: flex;
@@ -398,7 +388,6 @@
   color: var(--primary);
 }
 
-/* Messages area */
 .chat__messages {
   flex: 1;
   overflow-y: auto;
@@ -412,7 +401,6 @@
 .chat__messages::-webkit-scrollbar { display: none; }
 .chat__messages { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Date divider */
 .chat__date-divider {
   display: flex;
   align-items: center;
@@ -431,7 +419,6 @@
   border-radius: var(--radius-full);
 }
 
-/* Message bubbles */
 .chat__msg {
   display: flex;
   gap: 0.75rem;
@@ -504,7 +491,6 @@
   color: #3b82f6;
 }
 
-/* End indicator */
 .chat__end-indicator {
   margin-top: auto;
   padding-top: 1rem;
@@ -520,7 +506,6 @@
   background: #cbd5e1;
 }
 
-/* Input area */
 .chat__input-area {
   padding: 1rem;
   background: white;
@@ -648,7 +633,6 @@
   transform: scale(0.95);
 }
 
-/* Empty states */
 .chat__conv-empty {
   display: flex;
   flex-direction: column;

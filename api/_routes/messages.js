@@ -5,7 +5,6 @@ import Conversation from '../_models/Conversation.js';
 
 const router = express.Router();
 
-// Get all messages for a specific conversation
 router.get('/:conversationId', requireAuth(), async (req, res) => {
   try {
     const messages = await Message.find({ conversation_id: req.params.conversationId })
@@ -13,7 +12,7 @@ router.get('/:conversationId', requireAuth(), async (req, res) => {
       .populate('conversation_id')
       .sort({ created_at: 1 });
     
-    // Format if necessary to stringify _id
+
     const formatted = messages.map(m => {
       const obj = m.toObject();
       obj.id = obj._id.toString();
@@ -26,7 +25,6 @@ router.get('/:conversationId', requireAuth(), async (req, res) => {
   }
 });
 
-// Post a new message to a conversation
 router.post('/', requireAuth(), async (req, res) => {
   const { content, conversation_id, image_url } = req.body;
   
@@ -50,7 +48,7 @@ router.post('/', requireAuth(), async (req, res) => {
     message = await message.populate('sender_id', 'full_name title image');
     message = await message.populate('conversation_id');
     
-    // Update the conversation's latestMessage
+
     await Conversation.findByIdAndUpdate(req.body.conversation_id, {
       latestMessage: message._id,
     });

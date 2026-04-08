@@ -213,7 +213,7 @@ const UserProfile = () => {
   return (
     <MainLayout>
       <div className="max-w-4xl mx-auto py-8 px-4">
-        {/* Back button */}
+        
         <button
           className="flex items-center gap-2 px-4 py-2 mb-6 text-zinc-600 dark:text-zinc-400 font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition"
           onClick={() => navigate(-1)}
@@ -222,12 +222,12 @@ const UserProfile = () => {
           Back
         </button>
 
-        {/* Profile Hero */}
+        
         <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800 overflow-hidden mb-8">
           <div className="h-32 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 opacity-90 relative"></div>
 
           <div className="px-6 sm:px-10 pb-8 relative -mt-16 flex flex-col sm:flex-row gap-6 sm:items-end">
-            {/* Avatar */}
+            
             <div className="relative shrink-0">
               {profile.avatar_url ? (
                 <img
@@ -247,7 +247,7 @@ const UserProfile = () => {
               </div>
             </div>
 
-            {/* Info */}
+            
             <div className="flex-1 mt-2 sm:mt-16">
               <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">{profile.full_name}</h1>
               <p className="text-lg text-zinc-600 dark:text-zinc-400 mt-1">
@@ -263,7 +263,7 @@ const UserProfile = () => {
               )}
             </div>
 
-            {/* Actions */}
+            
             <div className="flex flex-wrap gap-3 mt-4 sm:mt-0 sm:self-end">
               {!isOwnProfile && (
                 <>
@@ -343,10 +343,10 @@ const UserProfile = () => {
           </div>
         </div>
 
-        {/* Content grid */}
+        
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1 space-y-6">
-            {/* About */}
+            
             {profile.bio && (
               <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800 p-6">
                 <h2 className="flex items-center gap-2 text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-4">
@@ -357,7 +357,7 @@ const UserProfile = () => {
               </div>
             )}
 
-            {/* Details */}
+            
             <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800 p-6">
               <h2 className="flex items-center gap-2 text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-4">
                 <span className="material-symbols-outlined text-zinc-400">badge</span>
@@ -409,7 +409,7 @@ const UserProfile = () => {
               </div>
             </div>
 
-            {/* Skills */}
+            
             {profile.skills && profile.skills.length > 0 && (
               <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800 p-6">
                 <h2 className="flex items-center gap-2 text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-4">
@@ -426,7 +426,7 @@ const UserProfile = () => {
           </div>
 
           <div className="lg:col-span-2 space-y-6">
-            {/* Posts */}
+            
             <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800 p-6">
               <h2 className="flex items-center gap-2 text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-6">
                 <span className="material-symbols-outlined text-zinc-400">article</span>

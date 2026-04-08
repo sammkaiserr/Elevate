@@ -16,7 +16,7 @@ const ProfessionalProfileSetup = () => {
       <Header />
 
       <main className="pro-profile__main">
-        {/* Sidebar */}
+        
         <aside className="pro-profile__sidebar">
           <div className="pro-profile__identity">
             <div className="pro-profile__identity-header">
@@ -62,7 +62,7 @@ const ProfessionalProfileSetup = () => {
           </div>
         </aside>
 
-        {/* Main Form */}
+        
         <section className="pro-profile__form-section">
           <div className="pro-profile__heading">
             <h1>Setup your Professional Hub</h1>
@@ -70,7 +70,7 @@ const ProfessionalProfileSetup = () => {
           </div>
 
           <form className="pro-profile__form" onSubmit={e => e.preventDefault()}>
-            {/* Identity & Role */}
+            
             <div>
               <div className="pro-profile__group-header">
                 <span className="material-symbols-outlined">contact_page</span>
@@ -88,7 +88,7 @@ const ProfessionalProfileSetup = () => {
               </div>
             </div>
 
-            {/* Experience & Background */}
+            
             <div className="pro-profile__experience-group">
               <div className="pro-profile__group-header">
                 <span className="material-symbols-outlined">history_edu</span>
@@ -116,7 +116,7 @@ const ProfessionalProfileSetup = () => {
               </div>
             </div>
 
-            {/* Network Context */}
+            
             <div>
               <div className="pro-profile__group-header">
                 <span className="material-symbols-outlined">explore</span>
@@ -150,7 +150,7 @@ const ProfessionalProfileSetup = () => {
               </div>
             </div>
 
-            {/* Actions */}
+            
             <div className="pro-profile__actions">
               <div className="pro-profile__actions-info">
                 <div className="pro-profile__actions-info-dot"></div>

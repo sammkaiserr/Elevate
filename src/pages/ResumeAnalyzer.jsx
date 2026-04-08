@@ -10,7 +10,6 @@ export default function ResumeAnalyzer() {
   const [history, setHistory] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth >= 1024);
 
-  // VITE_API_URL handles absolute paths both locally and in prod
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
 
   const handleUpload = async (file) => {
@@ -22,7 +21,6 @@ export default function ResumeAnalyzer() {
       const formData = new FormData();
       formData.append("resume", file);
 
-      // We explicitly mapped it to /api/resume/upload in api/index.js
       const res = await fetch(`${API_URL}/resume/upload`, {
         method: "POST",
         body: formData,
@@ -36,7 +34,6 @@ export default function ResumeAnalyzer() {
 
       setAnalysis(data.analysis);
 
-      // Add to history
       const historyItem = {
         id: Date.now().toString(),
         fileName: file.name,
@@ -65,7 +62,7 @@ export default function ResumeAnalyzer() {
 
   return (
     <div className="flex h-screen bg-surface-50 dark:bg-[#09090b] font-sans">
-      {/* Sidebar */}
+      
       <Sidebar
         isOpen={sidebarOpen}
         onToggle={() => setSidebarOpen(!sidebarOpen)}
@@ -74,11 +71,11 @@ export default function ResumeAnalyzer() {
         onNewAnalysis={handleNewAnalysis}
       />
 
-      {/* Main Content */}
+      
       <main
         className={`flex-1 overflow-y-auto transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${sidebarOpen ? "lg:ml-[280px]" : "ml-0"}`}
       >
-        {/* Toggle button when sidebar is closed */}
+        
         {!sidebarOpen && (
           <button
             onClick={() => setSidebarOpen(true)}
@@ -91,10 +88,10 @@ export default function ResumeAnalyzer() {
         )}
 
         <div className="max-w-4xl mx-auto px-3 py-6 md:px-6 md:py-10">
-          {/* Hero / Header */}
+          
           {!analysis && !loading && (
             <div className="text-center mb-14 animate-fade-in">
-              {/* Logo Mark */}
+              
               <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-brand-500 to-violet-600 rounded-2xl mb-6 shadow-glow-lg">
                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
@@ -108,7 +105,7 @@ export default function ResumeAnalyzer() {
                 Upload your resume and get instant AI-powered analysis with skill insights and personalized job matches.
               </p>
 
-              {/* Feature pills */}
+              
               <div className="flex items-center justify-center gap-3 mt-8 flex-wrap">
                 <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-zinc-900 rounded-xl border border-zinc-100 dark:border-zinc-800 shadow-sm text-sm text-zinc-500 dark:text-zinc-400 font-medium">
                   <svg className="w-4 h-4 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -132,14 +129,14 @@ export default function ResumeAnalyzer() {
             </div>
           )}
 
-          {/* Upload Section */}
+          
           {!analysis && !loading && (
             <div className="animate-slide-up-delayed">
               <ResumeUpload onUpload={handleUpload} />
             </div>
           )}
 
-          {/* Loading State */}
+          
           {loading && (
             <div className="flex flex-col items-center justify-center py-32 animate-fade-in">
               <div className="relative">
@@ -154,7 +151,7 @@ export default function ResumeAnalyzer() {
               <p className="mt-8 text-xl font-bold text-zinc-800 dark:text-white">Analyzing your resume</p>
               <p className="mt-2 text-sm text-zinc-400 font-medium">Extracting skills and matching jobs...</p>
 
-              {/* Progress steps */}
+              
               <div className="mt-8 space-y-3">
                 <LoadingStep label="Extracting text from PDF" done />
                 <LoadingStep label="Analyzing skills and generating ATS score" active />
@@ -162,7 +159,7 @@ export default function ResumeAnalyzer() {
             </div>
           )}
 
-          {/* Error State */}
+          
           {error && (
             <div className="animate-slide-up max-w-lg mx-auto">
               <div className="bg-white dark:bg-zinc-900 border border-rose-100 dark:border-rose-900/30 rounded-2xl p-8 text-center shadow-card">
@@ -183,10 +180,10 @@ export default function ResumeAnalyzer() {
             </div>
           )}
 
-          {/* Results */}
+          
           {analysis && (
             <div className="space-y-6 animate-fade-in">
-              {/* Results Header */}
+              
               <div className="flex items-center justify-between pb-2">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-gradient-to-br from-brand-500 to-violet-600 rounded-xl flex items-center justify-center shadow-glow">

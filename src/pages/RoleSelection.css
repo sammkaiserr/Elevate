@@ -1,6 +1,4 @@
-/* ============================================
-   ROLE SELECTION PAGE
-   ============================================ */
+
 .role-selection {
   min-height: 100vh;
   display: flex;
@@ -51,7 +49,6 @@
   max-width: 56rem;
 }
 
-/* Hero */
 .role-selection__hero {
   text-align: center;
   margin-bottom: 3rem;
@@ -76,7 +73,6 @@
   margin: 0 auto;
 }
 
-/* Cards Grid */
 .role-selection__cards {
   display: grid;
   grid-template-columns: 1fr;
@@ -187,7 +183,6 @@
   font-size: 3.5rem;
 }
 
-/* Footer CTA */
 .role-selection__footer {
   margin-top: 4rem;
   display: flex;
@@ -226,7 +221,6 @@
   text-decoration: underline;
 }
 
-/* Background decorations */
 .role-selection__bg-low {
   position: fixed;
   bottom: 0;

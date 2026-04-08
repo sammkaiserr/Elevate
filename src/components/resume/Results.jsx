@@ -35,7 +35,7 @@ function SectionCard({
 export default function Results({ analysis }) {
   return (
     <div className="space-y-5">
-      {/* Summary Stats Bar */}
+      
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 animate-slide-up">
         <StatCard
           label="ATS Score"
@@ -79,7 +79,7 @@ export default function Results({ analysis }) {
         />
       </div>
 
-      {/* Technical Skills */}
+      
       {analysis.technical_skills?.length > 0 && (
         <SectionCard
           icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>}
@@ -97,7 +97,7 @@ export default function Results({ analysis }) {
         </SectionCard>
       )}
 
-      {/* Programming Languages */}
+      
       {analysis.languages?.length > 0 && (
         <SectionCard
           icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
@@ -115,7 +115,7 @@ export default function Results({ analysis }) {
         </SectionCard>
       )}
 
-      {/* Frameworks */}
+      
       {analysis.frameworks?.length > 0 && (
         <SectionCard
           icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>}
@@ -133,7 +133,7 @@ export default function Results({ analysis }) {
         </SectionCard>
       )}
 
-      {/* Soft Skills */}
+      
       {analysis.soft_skills?.length > 0 && (
         <SectionCard
           icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>}
@@ -151,7 +151,7 @@ export default function Results({ analysis }) {
         </SectionCard>
       )}
 
-      {/* Detailed Feedback */}
+      
       {analysis.feedback && (
         <SectionCard
           icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>}
@@ -166,7 +166,7 @@ export default function Results({ analysis }) {
         </SectionCard>
       )}
 
-      {/* Improvement Suggestions */}
+      
       {analysis.suggestions?.length > 0 && (
         <SectionCard
           icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>}
@@ -188,7 +188,7 @@ export default function Results({ analysis }) {
         </SectionCard>
       )}
 
-      {/* Keywords to Add */}
+      
       {analysis.better_keywords?.length > 0 && (
         <SectionCard
           icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" /></svg>}
@@ -205,7 +205,7 @@ export default function Results({ analysis }) {
         </SectionCard>
       )}
 
-      {/* Skill Gaps */}
+      
       {analysis.missing_skills?.length > 0 && (
         <SectionCard
           icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>}

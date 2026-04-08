@@ -66,7 +66,6 @@ const GroupChatModal = ({ onClose, fetchConversations }) => {
     }
   };
 
-  // Create a 1-on-1 chat if only 1 user selected without entering a name
   const handleStartDirect = async (user) => {
     try {
       const token = await getToken();
@@ -122,7 +121,7 @@ const GroupChatModal = ({ onClose, fetchConversations }) => {
               />
             </div>
 
-            {/* Selected Users */}
+            
             <div className="flex flex-wrap gap-2">
               {selectedUsers.map((u) => (
                 <span 
@@ -137,7 +136,7 @@ const GroupChatModal = ({ onClose, fetchConversations }) => {
               ))}
             </div>
 
-            {/* Search Results */}
+            
             {loading ? (
               <div className="flex justify-center p-4">
                 <span className="material-symbols-outlined animate-spin text-zinc-400">autorenew</span>

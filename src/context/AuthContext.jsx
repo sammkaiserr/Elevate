@@ -22,7 +22,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Auto-sync: create profile row in backend if it doesn't exist yet
   const syncProfile = async (clerkUser) => {
     const userId = clerkUser.id;
     try {

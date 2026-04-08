@@ -1,6 +1,4 @@
-/* ============================================
-   PROFESSIONAL PROFILE SETUP PAGE
-   ============================================ */
+
 .pro-profile {
   min-height: 100vh;
   background: var(--background);
@@ -19,7 +17,6 @@
   .pro-profile__main { flex-direction: row; padding: 6rem 2rem 4rem; }
 }
 
-/* Sidebar */
 .pro-profile__sidebar {
   width: 100%;
   display: flex;
@@ -141,7 +138,6 @@
   font-size: 1.25rem;
 }
 
-/* Completion card */
 .pro-profile__completion {
   background: var(--primary-container);
   padding: 1.5rem;
@@ -192,7 +188,6 @@
   border-radius: var(--radius-full);
 }
 
-/* Main form section */
 .pro-profile__form-section {
   flex: 1;
 }
@@ -221,7 +216,6 @@
   margin-top: 2.5rem;
 }
 
-/* Group */
 .pro-profile__group-header {
   display: flex;
   align-items: center;
@@ -306,7 +300,6 @@
   border-radius: var(--radius-xl);
 }
 
-/* Skills tags */
 .pro-profile__skills-container {
   display: flex;
   flex-wrap: wrap;
@@ -361,7 +354,6 @@
   font-size: 0.875rem;
 }
 
-/* Actions */
 .pro-profile__actions {
   padding-top: 2rem;
   border-top: 1px solid rgba(196, 198, 207, 0.1);

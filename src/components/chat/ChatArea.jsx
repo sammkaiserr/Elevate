@@ -28,7 +28,7 @@ const ChatArea = ({ selectedChat, messages, loading, sendMessage, socket, curren
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
-    if (file && file.size <= 5 * 1024 * 1024) { // 5MB limit for images
+    if (file && file.size <= 5 * 1024 * 1024) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImage(reader.result);
@@ -76,12 +76,12 @@ const ChatArea = ({ selectedChat, messages, loading, sendMessage, socket, curren
   return (
     <section className="chat__area flex flex-col h-full bg-white dark:bg-zinc-900 border-l border-zinc-200 dark:border-zinc-800">
       
-      {/* Header */}
+      
       <div className="h-16 border-b border-zinc-200 dark:border-zinc-800 flex items-center px-6 sticky top-0 bg-white/80 dark:bg-zinc-900/80 backdrop-blur z-10">
         <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{chatTitle}</h3>
       </div>
 
-      {/* Messages */}
+      
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {loading ? (
           <div className="flex justify-center items-center h-full">
@@ -94,22 +94,22 @@ const ChatArea = ({ selectedChat, messages, loading, sendMessage, socket, curren
               <div key={m._id || i} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[70%] rounded-2xl p-4 ${isMe ? 'bg-blue-600 text-white rounded-tr-sm' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-tl-sm'}`}>
                   
-                  {/* Sender Name for Groups */}
+                  
                   {!isMe && selectedChat.isGroupChat && (
                     <div className="text-xs text-blue-500 font-semibold mb-1">
                       {m.sender_id.full_name}
                     </div>
                   )}
 
-                  {/* Image */}
+                  
                   {m.image_url && (
                     <img src={m.image_url} alt="chat attachment" className="rounded-xl mb-2 max-h-64 object-contain" />
                   )}
 
-                  {/* Text */}
+                  
                   {m.content && <p className="whitespace-pre-wrap">{m.content}</p>}
                   
-                  {/* Timestamp */}
+                  
                   <div className={`text-[10px] mt-2 text-right ${isMe ? 'text-blue-200' : 'text-zinc-400'}`}>
                     {new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
@@ -130,7 +130,7 @@ const ChatArea = ({ selectedChat, messages, loading, sendMessage, socket, curren
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
+      
       <div className="p-4 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
         {previewImage && (
           <div className="mb-4 relative inline-block">

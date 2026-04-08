@@ -27,7 +27,6 @@ const Chat = () => {
     }
   }, [location.state]);
 
-  // Initialize socket
   useEffect(() => {
     if (!userId) return;
     socket = io(ENDPOINT, {
@@ -59,7 +58,7 @@ const Chat = () => {
 
   useEffect(() => {
     fetchConversations();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [userId]);
 
   useEffect(() => {
@@ -83,15 +82,14 @@ const Chat = () => {
     
     fetchMessages();
     selectedChatCompare = selectedChat;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [selectedChat]);
 
-  // Socket On Message Recieved
   useEffect(() => {
     if (!socket) return;
     const messageHandler = (newMessageRecieved) => {
       if (!selectedChatCompare || selectedChatCompare._id !== newMessageRecieved.conversation_id._id) {
-        // Notification logic or update chat list could go here
+
         fetchConversations();
       } else {
         setMessages((prev) => [...prev, newMessageRecieved]);
@@ -122,7 +120,7 @@ const Chat = () => {
       const data = await res.json();
       socket.emit('new message', data);
       setMessages([...messages, data]);
-      fetchConversations(); // Trigger update for latest message on sidebar
+      fetchConversations();
     } catch (error) {
       console.error("Error sending message", error);
     }

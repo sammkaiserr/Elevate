@@ -10,7 +10,7 @@ export default function Sidebar({
 }) {
   return (
     <>
-      {/* Overlay on mobile */}
+      
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 lg:hidden"
@@ -27,7 +27,7 @@ export default function Sidebar({
           flex flex-col border-r border-white/5
         `}
       >
-        {/* Header */}
+        
         <div className="p-5 pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -51,7 +51,7 @@ export default function Sidebar({
           </div>
         </div>
 
-        {/* Back to App Link */}
+        
         <div className="px-4 pb-2">
           <Link
             to="/"
@@ -64,7 +64,7 @@ export default function Sidebar({
           </Link>
         </div>
 
-        {/* New Analysis Button */}
+        
         <div className="px-4 pb-4">
           <button
             onClick={onNewAnalysis}
@@ -79,7 +79,7 @@ export default function Sidebar({
 
         <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mx-4" />
 
-        {/* History */}
+        
         <div className="flex-1 overflow-y-auto px-4 pt-4 pb-4">
           <p className="text-[11px] text-zinc-600 uppercase tracking-[0.15em] font-bold mb-3 px-2">
             Recent
@@ -127,7 +127,6 @@ export default function Sidebar({
             </div>
           )}
         </div>
-
 
       </aside>
     </>

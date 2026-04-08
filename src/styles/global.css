@@ -1,15 +1,12 @@
-/* Google Fonts */
+
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 
 @tailwind components;
 @tailwind utilities;
 
-/* ============================================
-   ELEVATE DESIGN SYSTEM — M3 Color Tokens
-   ============================================ */
 :root {
-  /* Primary */
+  
   --primary: #002045;
   --primary-container: #1a365d;
   --on-primary: #ffffff;
@@ -20,7 +17,7 @@
   --on-primary-fixed-variant: #2d476f;
   --inverse-primary: #adc7f7;
 
-  /* Secondary */
+  
   --secondary: #545f72;
   --secondary-container: #d5e0f7;
   --on-secondary: #ffffff;
@@ -30,7 +27,7 @@
   --on-secondary-fixed: #111c2c;
   --on-secondary-fixed-variant: #3c475a;
 
-  /* Tertiary */
+  
   --tertiary: #00213e;
   --tertiary-container: #003762;
   --on-tertiary: #ffffff;
@@ -40,7 +37,7 @@
   --on-tertiary-fixed: #001d37;
   --on-tertiary-fixed-variant: #00497e;
 
-  /* Surface */
+  
   --surface: #f7fafc;
   --surface-dim: #d7dadc;
   --surface-bright: #f7fafc;
@@ -56,67 +53,64 @@
   --inverse-surface: #2d3133;
   --inverse-on-surface: #eef1f3;
 
-  /* Background */
+  
   --background: #f7fafc;
   --on-background: #181c1e;
 
-  /* Error */
+  
   --error: #ba1a1a;
   --error-container: #ffdad6;
   --on-error: #ffffff;
   --on-error-container: #93000a;
 
-  /* Outline */
+  
   --outline: #74777f;
   --outline-variant: #c4c6cf;
 
-  /* Typography */
+  
   --font-headline: 'Manrope', sans-serif;
   --font-body: 'Inter', sans-serif;
   --font-label: 'Inter', sans-serif;
 
-  /* Radius */
+  
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
   --radius-xl: 1.5rem;
   --radius-full: 9999px;
 
-  /* Shadows */
+  
   --shadow-sm: 0 1px 3px rgba(0, 32, 69, 0.04);
   --shadow-md: 0 4px 12px rgba(0, 32, 69, 0.08);
   --shadow-lg: 0 8px 24px rgba(0, 32, 69, 0.12);
   --shadow-xl: 0 16px 48px rgba(0, 32, 69, 0.16);
 
-  /* Transitions */
+  
   --transition-fast: 150ms ease;
   --transition-normal: 200ms ease;
   --transition-slow: 300ms ease;
 }
 
-/* ============================================
-   DARK MODE
-   ============================================ */
 :root.dark {
-  /* Primary */
+  
   --primary: #adc7f7;
   --primary-container: #1e3a5f;
   --on-primary: #001b3c;
   --on-primary-container: #d6e3ff;
 
-  /* Secondary */
+  
   --secondary: #bcc7dd;
   --secondary-container: #2a3447;
   --on-secondary: #253349;
   --on-secondary-container: #d8e3fa;
 
-  /* Tertiary */
+  
   --tertiary: #9fcaff;
   --tertiary-container: #00497e;
   --on-tertiary: #001d37;
   --on-tertiary-container: #d2e4ff;
 
-  /* Background / Surface — Soft Dark (not pure black) */
+  
   --surface: #12151a;
   --surface-dim: #0d1017;
   --surface-bright: #1e2229;
@@ -132,30 +126,27 @@
   --inverse-surface: #e3e8ee;
   --inverse-on-surface: #2d333b;
 
-  /* Background */
+  
   --background: #12151a;
   --on-background: #e8edf3;
 
-  /* Error */
+  
   --error: #ffb4ab;
   --error-container: #93000a;
   --on-error: #690005;
   --on-error-container: #ffdad6;
 
-  /* Outline */
+  
   --outline: #6b7280;
   --outline-variant: #374151;
 
-  /* Shadows — subtler in dark mode */
+  
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
   --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
 }
 
-/* ============================================
-   RESET & BASE
-   ============================================ */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -207,17 +198,11 @@ img {
   display: block;
 }
 
-/* Material Symbols */
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   vertical-align: middle;
 }
 
-/* ============================================
-   UTILITY CLASSES
-   ============================================ */
-
-/* Gradient text */
 .gradient-text {
   background: linear-gradient(135deg, var(--primary), var(--primary-container));
   -webkit-background-clip: text;
@@ -225,7 +210,6 @@ img {
   background-clip: text;
 }
 
-/* Gradient button */
 .btn-gradient {
   background: linear-gradient(135deg, var(--primary), var(--primary-container));
   color: var(--on-primary);
@@ -249,14 +233,12 @@ img {
   transform: scale(0.97);
 }
 
-/* Glass effect */
 .glass {
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
 
-/* Card */
 .card {
   background: var(--surface-container-lowest);
   border-radius: var(--radius-lg);
@@ -268,7 +250,6 @@ img {
   box-shadow: var(--shadow-md);
 }
 
-/* Form input */
 .form-input {
   width: 100%;
   background: var(--surface-container-highest);
@@ -287,7 +268,6 @@ img {
   box-shadow: 0 0 0 2px rgba(0, 32, 69, 0.2);
 }
 
-/* Chip/Tag */
 .chip {
   display: inline-flex;
   align-items: center;
@@ -309,7 +289,6 @@ img {
   color: var(--on-primary);
 }
 
-/* Background mesh */
 .bg-mesh {
   background-color: var(--surface);
   background-image:
@@ -317,13 +296,9 @@ img {
     radial-gradient(at 100% 100%, rgba(26, 54, 93, 0.05) 0px, transparent 50%);
 }
 
-/* Scrollbar hiding */
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* ============================================
-   RESPONSIVE HELPERS
-   ============================================ */
 @media (max-width: 768px) {
   .hide-mobile { display: none !important; }
 }
@@ -340,11 +315,8 @@ img {
   .show-tablet-only { display: none !important; }
 }
 
-/* ============================================
-   AI RESUME SCANNER - TAILWIND COMPONENTS
-   ============================================ */
 @layer components {
-  /* Skill Tags */
+  
   .skill-tag {
     @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide uppercase
       bg-blue-50 text-blue-700 border border-blue-100
@@ -385,18 +357,18 @@ img {
       transition-all duration-200 cursor-default;
   }
 
-  /* Glass card */
+  
   .glass-card {
     @apply bg-white dark:bg-zinc-900/60 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-card
       hover:shadow-card-hover dark:hover:shadow-glow transition-all duration-300 backdrop-blur-md;
   }
 
-  /* Gradient text */
+  
   .gradient-text {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-600 via-brand-500 to-violet-500;
   }
 
-  /* Shimmer loading effect */
+  
   .shimmer-ai {
     background: linear-gradient(
       90deg,

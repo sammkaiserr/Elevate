@@ -1,8 +1,5 @@
-/* ============================================
-   HOME / FEED PAGE
-   ============================================ */
 
-/* ── Search result banner ── */
+
 .home__search-banner {
   display: flex;
   align-items: center;
@@ -21,9 +18,8 @@
   font-size: 1.125rem;
 }
 
-/* ── Keyword highlight ── */
 .home__search-highlight {
-  background: #fef08a;        /* warm yellow */
+  background: #fef08a;        
   color: #713f12;
   border-radius: 2px;
   padding: 0 1px;
@@ -34,13 +30,11 @@
   color: #fde047;
 }
 
-
 .home__feed {
   max-width: 48rem;
   margin: 0 auto;
 }
 
-/* Composer */
 .home__composer {
   background: var(--surface-container-lowest);
   border-radius: var(--radius-lg);
@@ -101,7 +95,6 @@
   background: var(--surface-container-high);
 }
 
-/* Posts */
 .home__posts {
   display: flex;
   flex-direction: column;
@@ -147,7 +140,6 @@
   line-height: 1.6;
 }
 
-/* Post card */
 .home__post {
   background: var(--surface-container-lowest);
   border-radius: var(--radius-lg);
@@ -254,7 +246,6 @@
   font-size: 3rem;
 }
 
-/* Post actions */
 .home__post-actions {
   display: flex;
   align-items: center;
@@ -311,7 +302,6 @@
   to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
-
 .home__post-engage {
   display: flex;
   align-items: center;
@@ -338,7 +328,6 @@
   font-size: 1.25rem;
 }
 
-/* Right sidebar */
 .home__right-sidebar {
   display: none;
   width: 20rem;
@@ -378,7 +367,6 @@
   margin-bottom: 1rem;
 }
 
-/* Trending */
 .home__trending-list {
   display: flex;
   flex-direction: column;
@@ -426,7 +414,6 @@
   text-decoration: underline;
 }
 
-/* Suggestions */
 .home__suggestion-list {
   display: flex;
   flex-direction: column;
@@ -485,7 +472,6 @@
   font-size: 1.125rem;
 }
 
-/* Footer */
 .home__right-footer {
   padding: 1.5rem;
   display: flex;

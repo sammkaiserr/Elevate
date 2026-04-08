@@ -14,13 +14,11 @@ import notificationRoutes from './_routes/notifications.js';
 import conversationRoutes from './_routes/conversations.js';
 import commentRoutes from './_routes/comments.js';
 
-// Resume AI
 import parseResumeRoute from './_routes/resume/parseResume.js';
 
 const app = express();
 const httpServer = createServer(app);
 
-// Initialize Socket.io
 const io = new Server(httpServer, {
   cors: {
     origin: '*',
@@ -29,18 +27,15 @@ const io = new Server(httpServer, {
   pingTimeout: 60000,
 });
 
-// Middleware
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Clerk Authentication Middleware
 app.use(clerkMiddleware({
   secretKey: process.env.CLERK_SECRET_KEY,
   publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
 }));
 
-// MongoDB Connection (cached across warm invocations)
 let isConnected = false;
 const connectDB = async () => {
   if (isConnected) return;
@@ -54,7 +49,6 @@ const connectDB = async () => {
   }
 };
 
-// Database connection middleware
 app.use(async (req, res, next) => {
   try {
     await connectDB();
@@ -64,7 +58,6 @@ app.use(async (req, res, next) => {
   }
 });
 
-// API Routes
 app.use('/api/profiles', profileRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/connections', connectionRoutes);
@@ -75,15 +68,13 @@ app.use('/api/comments', commentRoutes);
 
 app.use('/api/resume/upload', parseResumeRoute);
 
-// Health Check
 app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Elevate Backend is running!' });
 });
 
-// Socket.io Logic
 io.on('connection', (socket) => {
   socket.on('setup', (userData) => {
-    socket.join(userData); // userData is userId
+    socket.join(userData);
     socket.emit('connected');
   });
 
@@ -96,9 +87,9 @@ io.on('connection', (socket) => {
     if (!chat || !chat.users) return;
 
     chat.users.forEach((user) => {
-      // Assume user._id or user string based on how it is populated
+
       const userId = user._id || user; 
-      // Do not send the message back to the sender
+
       const senderId = newMessageReceived.sender_id._id || newMessageReceived.sender_id;
       if (userId === senderId) return;
 
@@ -117,5 +108,4 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
-// Export the Express app for serverless deployments (Vercel)
 export default app;
