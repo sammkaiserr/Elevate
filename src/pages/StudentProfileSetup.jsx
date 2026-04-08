@@ -258,7 +258,7 @@ const StudentProfileSetup = () => {
             </p>
           </div>
 
-          <nav className="student-profile__progress-nav">
+          {isEditing && <nav className="student-profile__progress-nav">
             <div
               className={`student-profile__progress-item ${!isEditing ? 'active' : 'active'}`}
               onClick={() => isEditing && scrollToSection(personalRef)}
@@ -283,7 +283,7 @@ const StudentProfileSetup = () => {
               <span className="step-num">03</span>
               <span className="step-label">Interests & Goals</span>
             </div>
-          </nav>
+          </nav>}
         </aside>
 
         {/* Main Form */}
