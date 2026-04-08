@@ -1,6 +1,24 @@
 import express from 'express';
 import { requireAuth, getAuth } from '@clerk/express';
 import Post from '../_models/Post.js';
+import Profile from '../_models/Profile.js';
+
+// Helper: attach profile info to an array of plain post objects
+// user_id on posts is a Clerk string ID — populate() won't work, so we do it manually.
+async function attachProfiles(posts) {
+  const userIds = [...new Set(posts.map(p => p.user_id).filter(Boolean))];
+  const profiles = userIds.length
+    ? await Profile.find({ _id: { $in: userIds } }).lean()
+    : [];
+  const profileMap = {};
+  profiles.forEach(p => { profileMap[p._id] = p; });
+
+  return posts.map(p => ({
+    ...p,
+    id: p._id.toString(),
+    profiles: profileMap[p.user_id] || null,
+  }));
+}
 
 const router = express.Router();
 
@@ -19,18 +37,11 @@ router.get('/search', async (req, res) => {
         { tags: regex },
       ],
     })
-      .populate('user_id', 'full_name avatar_url job_title')
       .sort({ created_at: -1 })
-      .limit(50);
+      .limit(50)
+      .lean();
 
-    const formatted = posts.map(p => {
-      const obj = p.toObject();
-      obj.profiles = obj.user_id;
-      obj.user_id = obj.user_id ? (obj.user_id._id || obj.user_id) : null;
-      obj.id = obj._id.toString();
-      return obj;
-    });
-
+    const formatted = await attachProfiles(posts);
     res.json(formatted);
   } catch (err) {
     console.error('Error searching posts:', err);
@@ -42,18 +53,11 @@ router.get('/search', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const posts = await Post.find({ archived: false })
-      .populate('user_id', 'full_name avatar_url job_title')
       .sort({ created_at: -1 })
-      .limit(50);
-    
-    const formatted = posts.map(p => {
-      const obj = p.toObject();
-      obj.profiles = obj.user_id;
-      obj.user_id = obj.user_id ? (obj.user_id._id || obj.user_id) : null;
-      obj.id = obj._id.toString();
-      return obj;
-    });
-    
+      .limit(50)
+      .lean();
+
+    const formatted = await attachProfiles(posts);
     res.json(formatted);
   } catch (err) {
     console.error('Error fetching feed posts:', err);
@@ -64,17 +68,10 @@ router.get('/', async (req, res) => {
 router.get('/archived', requireAuth(), async (req, res) => {
   try {
     const posts = await Post.find({ archived: true, user_id: req.auth.userId })
-      .populate('user_id', 'full_name avatar_url job_title')
-      .sort({ created_at: -1 });
-    
-    const formatted = posts.map(p => {
-      const obj = p.toObject();
-      obj.profiles = obj.user_id;
-      obj.user_id = obj.user_id ? (obj.user_id._id || obj.user_id) : null;
-      obj.id = obj._id.toString();
-      return obj;
-    });
-    
+      .sort({ created_at: -1 })
+      .lean();
+
+    const formatted = await attachProfiles(posts);
     res.json(formatted);
   } catch (err) {
     console.error('Error fetching archived posts:', err);
@@ -85,17 +82,10 @@ router.get('/archived', requireAuth(), async (req, res) => {
 router.get('/user/:userId', async (req, res) => {
   try {
     const posts = await Post.find({ archived: false, user_id: req.params.userId })
-      .populate('user_id', 'full_name avatar_url job_title')
-      .sort({ created_at: -1 });
-    
-    const formatted = posts.map(p => {
-      const obj = p.toObject();
-      obj.profiles = obj.user_id;
-      obj.user_id = obj.user_id ? (obj.user_id._id || obj.user_id) : null;
-      obj.id = obj._id.toString();
-      return obj;
-    });
-    
+      .sort({ created_at: -1 })
+      .lean();
+
+    const formatted = await attachProfiles(posts);
     res.json(formatted);
   } catch (err) {
     console.error('Error fetching user posts:', err);
