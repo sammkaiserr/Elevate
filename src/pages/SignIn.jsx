@@ -8,8 +8,11 @@ const SignIn = () => {
 
   useEffect(() => {
     const html = document.documentElement;
+    const body = document.body;
     const wasDark = html.classList.contains('dark');
     html.classList.remove('dark');
+    html.style.background = '';
+    if (body) body.style.backgroundColor = '';
     return () => {
       if (wasDark) html.classList.add('dark');
     };
