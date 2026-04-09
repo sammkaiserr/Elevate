@@ -1,11 +1,16 @@
 
+
 .chat {
   height: 100vh;
+  padding-top: 3.75rem;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   background: var(--background);
 }
+
+
 
 .chat__main {
   flex: 1;

@@ -12,6 +12,7 @@ const stripBg = (el) => {
     child.style.backgroundColor = '';
     child.style.background = '';
     child.style.color = '';
+    child.removeAttribute('class');
   });
 };
 
@@ -43,7 +44,7 @@ const CreateBlog = () => {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['style'],
+      attributeFilter: ['style', 'class'],
     });
     return () => observer.disconnect();
   }, []);

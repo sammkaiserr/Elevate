@@ -344,6 +344,7 @@
 
 .create-blog__body * {
   background-color: transparent !important;
+  background-image: none !important;
 }
 
 
