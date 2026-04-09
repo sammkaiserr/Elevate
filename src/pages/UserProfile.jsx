@@ -454,7 +454,17 @@ const UserProfile = () => {
                         )}
                       </div>
                       <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4 leading-relaxed">
-                        {post.content?.replace(/<[^>]+>/g, '').substring(0, 150)}{post.content?.length > 150 ? '...' : ''}
+                        {(() => {
+                          const plain = (post.content || '')
+                            .replace(/<[^>]+>/g, ' ')
+                            .replace(/&nbsp;/g, ' ')
+                            .replace(/&amp;/g, '&')
+                            .replace(/&lt;/g, '<')
+                            .replace(/&gt;/g, '>')
+                            .replace(/\s+/g, ' ')
+                            .trim();
+                          return plain.substring(0, 150) + (plain.length > 150 ? '...' : '');
+                        })()}
                       </p>
                       <div className="flex items-center gap-4 text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-4">
                         <span>{timeAgo(post.created_at)}</span>

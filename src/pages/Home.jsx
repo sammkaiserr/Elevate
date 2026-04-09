@@ -202,7 +202,14 @@ const Home = () => {
               const timeAgo = getTimeAgo(post.created_at);
               const voted = votedPosts[post.id];
 
-              const plainContent = (post.content || '').replace(/<[^>]+>/g, '');
+              const plainContent = (post.content || '')
+                .replace(/<[^>]+>/g, ' ')
+                .replace(/&nbsp;/g, ' ')
+                .replace(/&amp;/g, '&')
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/\s+/g, ' ')
+                .trim();
               const previewText =
                 plainContent.substring(0, 200) +
                 (plainContent.length > 200 ? '...' : '');
