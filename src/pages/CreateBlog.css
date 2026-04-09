@@ -335,11 +335,33 @@
   background: transparent;
   resize: none;
   padding: 0;
+  color-scheme: light;
 }
 
 .create-blog__body:focus {
   outline: none;
 }
+
+.create-blog__body * {
+  background-color: transparent !important;
+}
+
+
+:root.dark .create-blog__body {
+  color: #e8edf3;
+  caret-color: #e8edf3;
+}
+
+:root.dark .create-blog__body::selection,
+:root.dark .create-blog__body *::selection {
+  background: rgba(99, 140, 255, 0.35);
+  color: #e8edf3;
+}
+
+:root.dark .create-blog__content-area {
+  background: transparent;
+}
+
 
 .create-blog__body:empty::before {
   content: attr(data-placeholder);

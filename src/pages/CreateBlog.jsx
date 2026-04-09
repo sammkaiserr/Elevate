@@ -228,6 +228,7 @@ const CreateBlog = () => {
           <div
             ref={bodyRef} className="create-blog__body" contentEditable
             data-placeholder="Start writing or type '/' for commands..." suppressContentEditableWarning
+            style={{ colorScheme: 'light', background: 'transparent', color: 'inherit' }}
           />
         </div>
       </main>
