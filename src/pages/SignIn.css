@@ -5,11 +5,13 @@
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  background-color: var(--surface);
+  background-color: #f0f4ff;
   background-image:
-    radial-gradient(at 0% 0%, rgba(214, 227, 255, 0.4) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(26, 54, 93, 0.05) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, rgba(99, 140, 255, 0.25) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(173, 199, 247, 0.3) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(26, 54, 93, 0.08) 0px, transparent 60%);
   position: relative;
+  overflow: hidden;
 }
 
 .signin__wrapper {
@@ -266,17 +268,17 @@
 .signin__orb--1 {
   bottom: -6rem;
   left: -6rem;
-  width: 16rem;
-  height: 16rem;
-  background: rgba(0, 32, 69, 0.05);
+  width: 20rem;
+  height: 20rem;
+  background: rgba(37, 99, 235, 0.12);
 }
 
 .signin__orb--2 {
   top: -6rem;
   right: -6rem;
-  width: 20rem;
-  height: 20rem;
-  background: rgba(26, 54, 93, 0.05);
+  width: 24rem;
+  height: 24rem;
+  background: rgba(99, 140, 255, 0.1);
 }
 
 .signin__side-panel {
@@ -329,7 +331,31 @@
 }
 
 .signin__clerk-container .cl-card {
-  box-shadow: none;
-  background: transparent;
+  box-shadow: 0 4px 24px rgba(0, 32, 69, 0.1);
+  background: #ffffff;
+  border-radius: 1rem;
 }
 
+:root.dark .signin,
+:root.dark .signin * {
+  color-scheme: light;
+}
+
+:root.dark .signin {
+  background-color: #f0f4ff !important;
+  background-image:
+    radial-gradient(at 0% 0%, rgba(99, 140, 255, 0.25) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(173, 199, 247, 0.3) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(26, 54, 93, 0.08) 0px, transparent 60%) !important;
+}
+
+:root.dark .signin__brand h1 {
+  background: linear-gradient(135deg, #002045, #1a365d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+:root.dark .signin__brand p {
+  color: #43474e;
+}
