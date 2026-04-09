@@ -1,8 +1,20 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { apiFetch } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import './CreateBlog.css';
+
+const stripBg = (el) => {
+  if (!el) return;
+  el.style.backgroundColor = '';
+  el.style.background = '';
+  el.querySelectorAll('*').forEach(child => {
+    child.style.backgroundColor = '';
+    child.style.background = '';
+    child.style.color = '';
+  });
+};
+
 
 const CreateBlog = () => {
   const [searchParams] = useSearchParams();
@@ -23,8 +35,21 @@ const CreateBlog = () => {
   const { user } = useAuth();
 
   useEffect(() => {
-    if (isEditMode && editId) {
+    const el = bodyRef.current;
+    if (!el) return;
 
+    const observer = new MutationObserver(() => stripBg(el));
+    observer.observe(el, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style'],
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (isEditMode && editId) {
       apiFetch('/posts').then((posts) => {
         const data = posts.find(p => p.id === editId || p._id === editId);
         if (data) {
@@ -32,7 +57,10 @@ const CreateBlog = () => {
           setTags(data.tags || []);
           if (data.cover_image_url) setCoverImagePreview(data.cover_image_url);
           setTimeout(() => {
-            if (bodyRef.current) bodyRef.current.innerHTML = data.content || '';
+            if (bodyRef.current) {
+              bodyRef.current.innerHTML = data.content || '';
+              stripBg(bodyRef.current);
+            }
           }, 0);
         }
       }).catch(err => console.error('Error fetching post:', err));
@@ -55,8 +83,12 @@ const CreateBlog = () => {
 
   const execFormat = (command, value = null) => {
     document.execCommand(command, false, value);
-    if (bodyRef.current) bodyRef.current.focus();
+    if (bodyRef.current) {
+      bodyRef.current.focus();
+      setTimeout(() => stripBg(bodyRef.current), 0);
+    }
   };
+
 
   const handleLink = () => {
     const url = prompt('Enter URL:');
