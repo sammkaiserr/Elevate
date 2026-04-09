@@ -17,6 +17,7 @@ const Network = () => {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
+  const [sentRequests, setSentRequests] = useState({});
 
   const fetchData = useCallback(async () => {
     if (!user) return;
@@ -89,14 +90,16 @@ const Network = () => {
         body: JSON.stringify({ addressee_id: addresseeId, status: 'pending' })
       });
 
+      const connId = conn._id || conn.id;
+      setSentRequests((prev) => ({ ...prev, [addresseeId]: connId }));
+
       const sentProfile = suggestions.find(p => (p._id || p.id) === addresseeId);
-      setSuggestions(prev => prev.filter(p => (p._id || p.id) !== addresseeId));
       if (sentProfile) {
         setPendingSent(prev => [
           ...prev,
           {
             ...conn,
-            id: conn._id || conn.id,
+            id: connId,
             profile: sentProfile,
             requester_id: sentProfile,
             addressee_id: addresseeId,
@@ -104,10 +107,26 @@ const Network = () => {
           }
         ]);
       }
-
-      fetchData();
     } catch (err) {
       console.error('Error sending request:', err);
+    }
+    setActionLoading((prev) => ({ ...prev, [addresseeId]: false }));
+  };
+
+  const withdrawFromSuggestions = async (addresseeId) => {
+    const connectionId = sentRequests[addresseeId];
+    if (!connectionId) return;
+    setActionLoading((prev) => ({ ...prev, [addresseeId]: true }));
+    try {
+      await apiFetch(`/connections/${connectionId}`, { method: 'DELETE' });
+      setSentRequests((prev) => {
+        const copy = { ...prev };
+        delete copy[addresseeId];
+        return copy;
+      });
+      setPendingSent(prev => prev.filter(p => p.id !== connectionId));
+    } catch (err) {
+      console.error('Error withdrawing request:', err);
     }
     setActionLoading((prev) => ({ ...prev, [addresseeId]: false }));
   };
@@ -251,16 +270,28 @@ const Network = () => {
       <div className="network__grid">
         {filteredSuggestions.map((profile) => {
           const pid = profile._id || profile.id;
+          const isSent = !!sentRequests[pid];
           return renderUserCard(
             profile,
-            <button
-              className="network__btn network__btn--connect"
-              onClick={() => sendRequest(pid)}
-              disabled={actionLoading[pid]}
-            >
-              <span className="material-symbols-outlined">person_add</span>
-              {actionLoading[pid] ? 'Sending...' : 'Connect'}
-            </button>
+            isSent ? (
+              <button
+                className="network__btn network__btn--withdraw"
+                onClick={() => withdrawFromSuggestions(pid)}
+                disabled={actionLoading[pid]}
+              >
+                <span className="material-symbols-outlined">schedule</span>
+                {actionLoading[pid] ? 'Withdrawing...' : 'Requested'}
+              </button>
+            ) : (
+              <button
+                className="network__btn network__btn--connect"
+                onClick={() => sendRequest(pid)}
+                disabled={actionLoading[pid]}
+              >
+                <span className="material-symbols-outlined">person_add</span>
+                {actionLoading[pid] ? 'Sending...' : 'Connect'}
+              </button>
+            )
           );
         })}
       </div>

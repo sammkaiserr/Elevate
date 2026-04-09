@@ -14,16 +14,16 @@ const RoleSelection = () => {
     if (!selectedRole || !user) return;
     setSaving(true);
     try {
-
       await apiFetch(`/profiles/${user.id}`, {
         method: 'PUT',
         body: JSON.stringify({ role: selectedRole }),
       });
+      navigate(selectedRole === 'professional' ? '/profile/professional' : '/profile/student');
     } catch (err) {
       console.error('Failed to save role:', err);
+      alert('Failed to save your role. Please try again.');
     }
     setSaving(false);
-    navigate(selectedRole === 'professional' ? '/profile/professional' : '/profile/student');
   };
 
   return (

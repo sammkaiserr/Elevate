@@ -125,6 +125,7 @@ const StudentProfileSetup = () => {
         body: JSON.stringify({
           full_name: fullName, dob, location, university,
           field_of_study: major, graduation_year: gradYear, skills: activeInterests,
+          role: 'student',
         })
       });
       await fetchProfile(user.id); 

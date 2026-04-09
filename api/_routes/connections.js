@@ -1,5 +1,5 @@
 import express from 'express';
-import { requireAuth } from '@clerk/express';
+import { requireAuth, getAuth } from '@clerk/express';
 import Connection from '../_models/Connection.js';
 import Profile from '../_models/Profile.js';
 
@@ -7,7 +7,8 @@ const router = express.Router();
 
 router.get('/', requireAuth(), async (req, res) => {
   try {
-    const userId = req.auth.userId;
+    const auth = getAuth(req);
+    const userId = auth.userId || (req.auth && req.auth.userId);
     const connections = await Connection.find({
       $or: [{ requester_id: userId }, { addressee_id: userId }]
     }).lean();
@@ -37,11 +38,13 @@ router.get('/', requireAuth(), async (req, res) => {
 
 router.post('/', requireAuth(), async (req, res) => {
   try {
-    req.body.requester_id = req.auth.userId;
+    const auth = getAuth(req);
+    const currentUserId = auth.userId || (req.auth && req.auth.userId);
+    req.body.requester_id = currentUserId;
     const conn = new Connection(req.body);
     await conn.save();
 
-    if (req.body.addressee_id && req.body.addressee_id !== req.auth.userId) {
+    if (req.body.addressee_id && req.body.addressee_id !== currentUserId) {
       try {
         const Notification = (await import('../_models/Notification.js')).default;
         const Profile = (await import('../_models/Profile.js')).default;
@@ -49,7 +52,7 @@ router.post('/', requireAuth(), async (req, res) => {
 
         let requesterName = 'Someone';
         try {
-          const requesterProfile = await Profile.findById(req.auth.userId).lean();
+          const requesterProfile = await Profile.findById(currentUserId).lean();
           if (requesterProfile?.full_name) requesterName = requesterProfile.full_name;
         } catch (e) {  }
 
@@ -85,7 +88,8 @@ router.delete('/:id', requireAuth(), async (req, res) => {
     const conn = await Connection.findById(req.params.id);
     if (!conn) return res.status(404).json({ error: 'Connection not found' });
 
-    const userId = req.auth.userId;
+    const auth = getAuth(req);
+    const userId = auth.userId || (req.auth && req.auth.userId);
     if (conn.requester_id !== userId && conn.addressee_id !== userId) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
