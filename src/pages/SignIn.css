@@ -4,12 +4,16 @@
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  background-color: var(--surface);
+  background-color: #f7faff !important;
   background-image:
-    radial-gradient(at 0% 0%, rgba(214, 227, 255, 0.4) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(26, 54, 93, 0.05) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, rgba(99, 140, 255, 0.18) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(173, 199, 247, 0.22) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(26, 54, 93, 0.05) 0px, transparent 60%) !important;
   position: relative;
+  overflow: hidden;
+  color-scheme: light;
 }
+
 
 .signin__wrapper {
   width: 100%;
@@ -33,11 +37,23 @@
 }
 
 .signin__brand p {
-  color: #43474e;
+  color: #43474e !important;
   font-weight: 500;
   letter-spacing: -0.02em;
   font-size: 0.875rem;
 }
+
+.signin__brand-title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #002045, #2563eb) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
 
 
 .signin__card {
