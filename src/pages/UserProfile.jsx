@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { apiFetch } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import MainLayout from '../components/layout/MainLayout';
+import { getCleanPreviewText } from '../utils/textUtils';
 
 const UserProfile = () => {
   const { userId } = useParams();
@@ -454,17 +455,7 @@ const UserProfile = () => {
                         )}
                       </div>
                       <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4 leading-relaxed">
-                        {(() => {
-                          const plain = (post.content || '')
-                            .replace(/<[^>]+>/g, ' ')
-                            .replace(/&nbsp;/g, ' ')
-                            .replace(/&amp;/g, '&')
-                            .replace(/&lt;/g, '<')
-                            .replace(/&gt;/g, '>')
-                            .replace(/\s+/g, ' ')
-                            .trim();
-                          return plain.substring(0, 150) + (plain.length > 150 ? '...' : '');
-                        })()}
+                        {getCleanPreviewText(post.content, 150)}
                       </p>
                       <div className="flex items-center gap-4 text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-4">
                         <span>{timeAgo(post.created_at)}</span>

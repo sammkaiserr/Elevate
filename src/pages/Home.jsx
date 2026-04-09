@@ -4,6 +4,7 @@ import MainLayout from '../components/layout/MainLayout';
 import { apiFetch } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import CommentList from '../components/comment/CommentList';
+import { getCleanPreviewText } from '../utils/textUtils';
 import './Home.css';
 
 const Home = () => {
@@ -202,17 +203,7 @@ const Home = () => {
               const timeAgo = getTimeAgo(post.created_at);
               const voted = votedPosts[post.id];
 
-              const plainContent = (post.content || '')
-                .replace(/<[^>]+>/g, ' ')
-                .replace(/&nbsp;/g, ' ')
-                .replace(/&amp;/g, '&')
-                .replace(/&lt;/g, '<')
-                .replace(/&gt;/g, '>')
-                .replace(/\s+/g, ' ')
-                .trim();
-              const previewText =
-                plainContent.substring(0, 200) +
-                (plainContent.length > 200 ? '...' : '');
+              const previewText = getCleanPreviewText(post.content, 200);
 
               return (
                 <article key={post.id} className="home__post">

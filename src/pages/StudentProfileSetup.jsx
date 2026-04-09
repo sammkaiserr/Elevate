@@ -4,6 +4,7 @@ import Header from '../components/layout/Header';
 import BottomNav from '../components/layout/BottomNav';
 import { useAuth } from '../context/AuthContext';
 import { apiFetch } from '../config/api';
+import { getCleanPreviewText } from '../utils/textUtils';
 import './StudentProfileSetup.css';
 
 const interestsList = ['Product Design', 'Machine Learning', 'Entrepreneurship', 'Public Speaking', 'Fintech', 'Climate Tech'];
@@ -578,21 +579,11 @@ const StudentProfileSetup = () => {
                       </div>
 
                       <h2 style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '0.5rem', paddingRight: '2rem' }}>{post.title}</h2>
-                      {post.content && (() => {
-                        const plain = post.content
-                          .replace(/<[^>]+>/g, ' ')
-                          .replace(/&nbsp;/g, ' ')
-                          .replace(/&amp;/g, '&')
-                          .replace(/&lt;/g, '<')
-                          .replace(/&gt;/g, '>')
-                          .replace(/\s+/g, ' ')
-                          .trim();
-                        return (
-                          <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.75rem', lineHeight: '1.5' }}>
-                            {plain.substring(0, 200)}{plain.length > 200 ? '...' : ''}
-                          </p>
-                        );
-                      })()}
+                      {post.content && (
+                        <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.75rem', lineHeight: '1.5' }}>
+                          {getCleanPreviewText(post.content, 200)}
+                        </p>
+                      )}
 
                       {post.cover_image_url && (
                         <div style={{ borderRadius: '10px', overflow: 'hidden', marginBottom: '0.75rem' }}>
