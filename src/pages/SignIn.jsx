@@ -37,7 +37,6 @@ const SignIn = () => {
       <main className="signin__wrapper">
         <div className="signin__brand">
           <h1 className="signin__brand-title">Elevate</h1>
-          <p>The Curated Professional Network</p>
         </div>
 
         <div className="signin__clerk-container">

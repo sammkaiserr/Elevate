@@ -13,8 +13,10 @@ export default function Sidebar({
       
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 lg:hidden"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 lg:hidden transition-all duration-300"
           onClick={onToggle}
+          onTouchEnd={onToggle}
+          aria-hidden="true"
         />
       )}
 
@@ -41,11 +43,22 @@ export default function Sidebar({
               </div>
             </div>
             <button
-              onClick={onToggle}
-              className="p-2 hover:bg-white/5 rounded-xl transition-all duration-200 group"
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onToggle();
+              }}
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onToggle();
+              }}
+              className="p-3 -mr-2 bg-transparent hover:bg-white/10 active:bg-white/20 rounded-xl transition-all duration-200 cursor-pointer touch-manipulation z-[99] relative"
+              aria-label="Close sidebar"
             >
-              <svg className="w-4 h-4 text-zinc-500 group-hover:text-zinc-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              <svg className="w-5 h-5 text-zinc-400 hover:text-white pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
           </div>
@@ -68,7 +81,7 @@ export default function Sidebar({
         <div className="px-4 pb-4">
           <button
             onClick={onNewAnalysis}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-brand-600 to-violet-600 hover:from-brand-500 hover:to-violet-500 rounded-xl transition-all duration-200 text-sm font-semibold shadow-lg shadow-brand-600/20 hover:shadow-brand-500/30 active:scale-[0.98]"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-brand-600 to-violet-600 hover:from-brand-500 hover:to-violet-500 rounded-xl transition-all duration-200 text-sm text-white font-semibold shadow-lg shadow-brand-600/20 hover:shadow-brand-500/30 active:scale-[0.98]"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />

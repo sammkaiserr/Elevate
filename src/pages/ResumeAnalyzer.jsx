@@ -61,7 +61,7 @@ export default function ResumeAnalyzer() {
   };
 
   return (
-    <div className="flex h-screen bg-surface-50 dark:bg-[#09090b] font-sans">
+    <div className="flex h-[100dvh] bg-surface-50 dark:bg-[#09090b] font-sans">
       
       <Sidebar
         isOpen={sidebarOpen}
