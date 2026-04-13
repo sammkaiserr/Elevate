@@ -46,8 +46,8 @@ export default function Sidebar({
             </div>
             <button
               type="button"
-              onClick={(e) => {
-                e.stopPropagation();
+              onClick={() => {
+                console.log('[DEBUG] Sidebar close button CLICKED');
                 onToggle();
               }}
               className="p-3 -mr-2 bg-transparent hover:bg-white/10 active:bg-white/20 rounded-xl transition-all duration-200 cursor-pointer touch-manipulation z-[99] relative"

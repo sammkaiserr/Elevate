@@ -10,6 +10,14 @@ export default function ResumeAnalyzer() {
   const [history, setHistory] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth >= 1024);
 
+  const toggleSidebar = () => {
+    console.log('[DEBUG] toggleSidebar called, current sidebarOpen:', sidebarOpen);
+    setSidebarOpen((prev) => {
+      console.log('[DEBUG] setSidebarOpen prev:', prev, '-> next:', !prev);
+      return !prev;
+    });
+  };
+
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
 
   const handleUpload = async (file) => {
@@ -65,7 +73,7 @@ export default function ResumeAnalyzer() {
       
       <Sidebar
         isOpen={sidebarOpen}
-        onToggle={() => setSidebarOpen((prev) => !prev)}
+        onToggle={toggleSidebar}
         history={history}
         onHistoryClick={handleHistoryClick}
         onNewAnalysis={handleNewAnalysis}
