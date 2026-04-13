@@ -14,8 +14,10 @@ export default function Sidebar({
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 lg:hidden transition-all duration-300"
-          onClick={onToggle}
-          onTouchEnd={onToggle}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggle();
+          }}
           aria-hidden="true"
         />
       )}

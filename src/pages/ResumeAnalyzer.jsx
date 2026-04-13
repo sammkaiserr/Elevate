@@ -78,10 +78,13 @@ export default function ResumeAnalyzer() {
         
         {!sidebarOpen && (
           <button
-            onClick={() => setSidebarOpen(true)}
-            className="fixed top-5 left-5 z-30 p-2.5 bg-white dark:bg-zinc-900 rounded-xl shadow-glass hover:shadow-glass-lg transition-all duration-200 group"
+            onClick={(e) => {
+              e.stopPropagation();
+              setSidebarOpen(true);
+            }}
+            className="fixed top-5 left-5 z-50 p-2.5 bg-white dark:bg-zinc-900 rounded-xl shadow-glass hover:shadow-glass-lg transition-all duration-200 group cursor-pointer touch-manipulation"
           >
-            <svg className="w-5 h-5 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-800 dark:group-hover:text-zinc-200 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-800 dark:group-hover:text-zinc-200 transition-colors pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
