@@ -65,7 +65,7 @@ export default function ResumeAnalyzer() {
       
       <Sidebar
         isOpen={sidebarOpen}
-        onToggle={() => setSidebarOpen(!sidebarOpen)}
+        onToggle={() => setSidebarOpen((prev) => !prev)}
         history={history}
         onHistoryClick={handleHistoryClick}
         onNewAnalysis={handleNewAnalysis}

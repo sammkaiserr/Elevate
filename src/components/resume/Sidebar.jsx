@@ -45,12 +45,6 @@ export default function Sidebar({
             <button
               type="button"
               onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                onToggle();
-              }}
-              onTouchEnd={(e) => {
-                e.preventDefault();
                 e.stopPropagation();
                 onToggle();
               }}
