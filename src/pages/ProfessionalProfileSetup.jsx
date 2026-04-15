@@ -209,33 +209,6 @@ const ProfessionalProfileSetup = () => {
                   Edit
                 </button>
               </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', background: 'var(--surface-container)', padding: '1.5rem', borderRadius: '12px' }}>
-                <div>
-                  <strong style={{ display: 'block', fontSize: '0.875rem', color: 'var(--on-surface-variant)', marginBottom: '0.25rem' }}>Location</strong>
-                  <span style={{ color: 'var(--on-surface)' }}>{location || 'Not specified'}</span>
-                </div>
-                <div>
-                  <strong style={{ display: 'block', fontSize: '0.875rem', color: 'var(--on-surface-variant)', marginBottom: '0.25rem' }}>Company</strong>
-                  <span style={{ color: 'var(--on-surface)' }}>{company || 'Not specified'}</span>
-                </div>
-                {bio && (
-                  <div style={{ gridColumn: '1 / -1' }}>
-                    <strong style={{ display: 'block', fontSize: '0.875rem', color: 'var(--on-surface-variant)', marginBottom: '0.25rem' }}>Bio</strong>
-                    <span style={{ color: 'var(--on-surface)' }}>{bio}</span>
-                  </div>
-                )}
-                {skills.length > 0 && (
-                  <div style={{ gridColumn: '1 / -1' }}>
-                    <strong style={{ display: 'block', fontSize: '0.875rem', color: 'var(--on-surface-variant)', marginBottom: '0.5rem' }}>Skills</strong>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                      {skills.map(skill => (
-                        <span key={skill} style={{ padding: '0.375rem 0.875rem', borderRadius: '999px', background: 'rgba(37, 99, 235, 0.06)', color: 'var(--primary)', fontSize: '0.8rem', fontWeight: 600 }}>{skill}</span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
             </div>
           ) : (
             <form className="pro-profile__form" onSubmit={e => e.preventDefault()}>
