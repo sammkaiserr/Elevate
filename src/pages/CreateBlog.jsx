@@ -251,9 +251,7 @@ const CreateBlog = () => {
             <button className="create-blog__toolbar-btn" title="Link" onClick={handleLink}>
               <span className="material-symbols-outlined">link</span>
             </button>
-            <button className="create-blog__toolbar-btn" title="Code Block" onClick={() => execFormat('formatBlock', 'pre')}>
-              <span className="material-symbols-outlined">code_blocks</span>
-            </button>
+
           </div>
         </div>
 
