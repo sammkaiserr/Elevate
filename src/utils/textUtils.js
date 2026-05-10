@@ -13,7 +13,7 @@ export const getCleanPreviewText = (htmlString, maxLength = 200) => {
       .replace(/\s+/g, ' ')
       .trim();
     if (text.length > maxLength) {
-      return text.substring(0, maxLength) + '...';
+      return text.substring(0, maxLength);
     }
     return text;
   } catch (err) {

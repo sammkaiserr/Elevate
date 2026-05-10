@@ -13,6 +13,7 @@ const Home = () => {
   const [toast, setToast] = useState('');
   const [votedPosts, setVotedPosts] = useState({});
   const [expandedComments, setExpandedComments] = useState({});
+  const [expandedPosts, setExpandedPosts] = useState({});
   const { user, profile } = useAuth();
   const location = useLocation();
 
@@ -203,7 +204,11 @@ const Home = () => {
               const timeAgo = getTimeAgo(post.created_at);
               const voted = votedPosts[post.id];
 
+              const fullText = getCleanPreviewText(post.content, Infinity);
               const previewText = getCleanPreviewText(post.content, 200);
+              const isLongPost = fullText.length > 200;
+              const isExpanded = expandedPosts[post.id];
+              const displayText = isExpanded ? fullText : previewText;
 
               return (
                 <article key={post.id} className="home__post">
@@ -256,9 +261,22 @@ const Home = () => {
                     </h2>
 
                     
-                    {previewText && (
+                    {displayText && (
                       <p className="home__post-text">
-                        {highlightText(previewText, searchQuery)}
+                        {highlightText(displayText, searchQuery)}
+                        {isLongPost && (
+                          <button
+                            className="home__read-more-btn"
+                            onClick={() =>
+                              setExpandedPosts((prev) => ({
+                                ...prev,
+                                [post.id]: !prev[post.id],
+                              }))
+                            }
+                          >
+                            {isExpanded ? 'Show less' : '...Read more'}
+                          </button>
+                        )}
                       </p>
                     )}
 

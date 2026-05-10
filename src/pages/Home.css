@@ -223,6 +223,24 @@
   margin-bottom: 1rem;
 }
 
+.home__read-more-btn {
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.25rem;
+  display: inline;
+  transition: opacity var(--transition-normal);
+}
+
+.home__read-more-btn:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
 .home__post-image {
   border-radius: var(--radius-lg);
   overflow: hidden;
